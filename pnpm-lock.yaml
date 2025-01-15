@@ -29,15 +29,15 @@ importers:
       '@trpc/server':
         specifier: ^11.0.0-rc.446
         version: 11.0.0-rc.700(typescript@5.7.3)
+      animejs:
+        specifier: ^3.2.2
+        version: 3.2.2
       class-variance-authority:
         specifier: ^0.7.1
         version: 0.7.1
       clsx:
         specifier: ^2.1.1
         version: 2.1.1
-      animejs:
-        specifier: ^3.2.2
-        version: 3.2.2
       drizzle-orm:
         specifier: ^0.33.0
         version: 0.33.0(@libsql/client@0.9.0)(@types/react@18.3.18)(react@18.3.1)
