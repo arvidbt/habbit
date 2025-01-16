@@ -26,14 +26,18 @@ const bricolage_grotesque = Bricolage_Grotesque({
 export default function RootLayout({
     children,
 }: Readonly<{ children: React.ReactNode }>) {
-  return (
-    <html
-      lang="en"
-      className={`${poppins.variable} ${bricolage_grotesque.variable} latte`}
-    >
-      <body>
-        <TRPCReactProvider>{children}</TRPCReactProvider>
-      </body>
-    </html>
-  );
+    return (
+        <html
+            lang="en"
+            className={cn(
+                'latte',
+                poppins.variable,
+                bricolage_grotesque.variable
+            )}
+        >
+            <body>
+                <TRPCReactProvider>{children}</TRPCReactProvider>
+            </body>
+        </html>
+    )
 }
