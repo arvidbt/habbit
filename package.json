@@ -33,6 +33,7 @@
     "drizzle-orm": "^0.33.0",
     "geist": "^1.3.0",
     "lucide-react": "^0.471.1",
+    "motion": "^11.18.0",
     "next": "^15.0.1",
     "next-auth": "5.0.0-beta.25",
     "react": "^18.3.1",
@@ -45,6 +46,7 @@
   },
   "devDependencies": {
     "@catppuccin/tailwindcss": "^0.1.6",
+    "@types/animejs": "^3.1.12",
     "@types/eslint": "^8.56.10",
     "@types/node": "^20.14.10",
     "@types/react": "^18.3.3",
