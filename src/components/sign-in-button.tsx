@@ -1,3 +1,4 @@
+import { Icons } from './icons'
 import { Button } from './ui/button'
 import { signIn } from '@/server/auth'
 
@@ -9,7 +10,13 @@ export function SignInButton() {
                 await signIn('github')
             }}
         >
-            <Button aria-label="Login to your account" type="submit">
+            <Button
+                size={'sm'}
+                effect="expandIcon"
+                type="submit"
+                icon={Icons.LogIn}
+                iconPlacement="right"
+            >
                 Login
             </Button>
         </form>

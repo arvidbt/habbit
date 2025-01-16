@@ -5,6 +5,7 @@ import {
     SquarePlus,
     Settings,
     LogOut,
+    LogIn,
     HelpCircle,
 } from 'lucide-react'
 
@@ -16,4 +17,5 @@ export const Icons = {
     Settings,
     LogOut,
     HelpCircle,
+    LogIn,
 }
