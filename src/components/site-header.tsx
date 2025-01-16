@@ -2,7 +2,6 @@ import Link from 'next/link'
 import { SignInButton } from './sign-in-button'
 import { siteConfig } from '@/config/site.config'
 import { auth } from '@/server/auth'
-import { SignOutButton } from './sign-out-button'
 
 export async function SiteHeader() {
     const session = await auth()
@@ -14,9 +13,7 @@ export async function SiteHeader() {
                         {siteConfig.name}
                     </h1>
                 </Link>
-                <div className="space-x-2">
-                    {session ? <SignOutButton /> : <SignInButton />}
-                </div>
+                <div>{session ? <div></div> : <SignInButton />}</div>
             </div>
         </header>
     )

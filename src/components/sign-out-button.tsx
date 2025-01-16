@@ -9,7 +9,7 @@ export function SignOutButton() {
                 await signOut()
             }}
         >
-            <Button type="submit" className="py-1 text-sm">
+            <Button type="submit" className="w-full py-1 text-sm">
                 Sign Out
             </Button>
         </form>
