@@ -1,7 +1,7 @@
 import Link from 'next/link'
-import { SignInButton } from './sign-in-button'
 import { siteConfig } from '@/config/site.config'
 import { auth } from '@/server/auth'
+import { SignInButton } from './sign-in-button'
 
 export async function SiteHeader() {
     const session = await auth()
