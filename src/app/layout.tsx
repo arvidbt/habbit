@@ -28,7 +28,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${poppins.variable} ${bricolage_grotesque.variable}`}
+      className={`${poppins.variable} ${bricolage_grotesque.variable} latte`}
     >
       <body>
         <TRPCReactProvider>{children}</TRPCReactProvider>
