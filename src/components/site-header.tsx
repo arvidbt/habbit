@@ -2,6 +2,7 @@ import Link from 'next/link'
 import { siteConfig } from '@/config/site.config'
 import { auth } from '@/server/auth'
 import { SignInButton } from './sign-in-button'
+import { UserProfileSheet } from './user-dropdown-menu'
 
 export async function SiteHeader() {
     const session = await auth()
@@ -13,7 +14,13 @@ export async function SiteHeader() {
                         {siteConfig.name}
                     </h1>
                 </Link>
-                <div>{session ? <div></div> : <SignInButton />}</div>
+                <div>
+                    {session ? (
+                        <UserProfileSheet session={session} />
+                    ) : (
+                        <SignInButton />
+                    )}
+                </div>
             </div>
         </header>
     )
