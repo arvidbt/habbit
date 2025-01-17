@@ -46,6 +46,7 @@ export function CreateHabitForm() {
             title: 'Habit created',
             description: `You will ${values.what} ${values.when} so that you can ${values.why}.`,
         })
+
         setIsSubmitting(false)
     }
 
