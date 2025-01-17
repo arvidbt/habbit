@@ -29,15 +29,13 @@ import {
     SelectTrigger,
     SelectValue,
 } from '@/components/ui/select'
+import { Separator } from './ui/separator'
+import { CustomInput } from './habit-input'
 
 const formSchema = z.object({
-    what: z.string().min(2, {
-        message: 'Action must be at least 2 characters.',
-    }),
+    what: z.string(),
     when: z.string(),
-    why: z.string().min(2, {
-        message: 'Reason must be at least 2 characters.',
-    }),
+    why: z.string(),
 })
 
 export function CreateHabitForm() {
@@ -45,7 +43,7 @@ export function CreateHabitForm() {
         resolver: zodResolver(formSchema),
         defaultValues: {
             what: '',
-            when: 'day',
+            when: '',
             why: '',
         },
     })
@@ -55,26 +53,25 @@ export function CreateHabitForm() {
     }
 
     return (
-        <Card className="mx-auto w-full max-w-md">
-            <CardHeader>
-                <CardTitle>Create a New Habit</CardTitle>
-            </CardHeader>
+        <Card className="mx-auto w-full max-w-md bg-base">
+            <CardHeader></CardHeader>
             <CardContent>
                 <Form {...form}>
                     <form
                         onSubmit={form.handleSubmit(onSubmit)}
-                        className="space-y-4"
+                        className="space-y-3"
                     >
-                        <div className="flex items-center space-x-2">
-                            <p className="">I want to</p>
+                        <div className="flex w-full items-center space-x-2">
+                            <p className="whitespace-nowrap">I will</p>
+
                             <FormField
                                 control={form.control}
                                 name="what"
                                 render={({ field }) => (
                                     <FormItem>
                                         <FormControl>
-                                            <Input
-                                                className="w-36 text-black"
+                                            <CustomInput
+                                                className=""
                                                 {...field}
                                             />
                                         </FormControl>
@@ -83,52 +80,36 @@ export function CreateHabitForm() {
                                 )}
                             />
                         </div>
-
-                        <div className="flex items-center space-x-2">
-                            <p className="">every</p>
+                        <div className="flex w-full items-center space-x-2">
                             <FormField
                                 control={form.control}
                                 name="when"
                                 render={({ field }) => (
                                     <FormItem>
                                         <FormControl>
-                                            <Select
-                                                onValueChange={field.onChange}
-                                                defaultValue={field.value}
-                                            >
-                                                <SelectTrigger className="w-[8rem]">
-                                                    <SelectValue placeholder="day" />
-                                                </SelectTrigger>
-                                                <SelectContent>
-                                                    <SelectItem value="day">
-                                                        day
-                                                    </SelectItem>
-                                                    <SelectItem value="week">
-                                                        week
-                                                    </SelectItem>
-                                                    <SelectItem value="month">
-                                                        month
-                                                    </SelectItem>
-                                                </SelectContent>
-                                            </Select>
+                                            <CustomInput
+                                                className=""
+                                                placeholder=""
+                                                {...field}
+                                            />
                                         </FormControl>
                                         <FormMessage />
                                     </FormItem>
                                 )}
                             />
-                            <p>so that</p>
+                            <p className="whitespace-nowrap">so that</p>
                         </div>
+                        <div className="flex w-full items-center space-x-2">
+                            <p className="whitespace-nowrap">I can</p>
 
-                        <div className="flex items-center space-x-2">
-                            <p className=""> I can</p>
                             <FormField
                                 control={form.control}
                                 name="why"
                                 render={({ field }) => (
                                     <FormItem>
                                         <FormControl>
-                                            <Input
-                                                className="w-44 text-black"
+                                            <CustomInput
+                                                className=""
                                                 placeholder=""
                                                 {...field}
                                             />
@@ -138,7 +119,7 @@ export function CreateHabitForm() {
                                 )}
                             />
                         </div>
-
+                        <Separator />
                         <CardFooter className="px-0">
                             <Button type="submit" className="w-full">
                                 Create Habit
