@@ -1,5 +1,6 @@
 'use client'
 
+import { useState } from 'react'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
@@ -10,35 +11,24 @@ import {
     FormControl,
     FormField,
     FormItem,
-    FormLabel,
     FormMessage,
 } from '@/components/ui/form'
-import { Input } from '@/components/ui/input'
-import {
-    Card,
-    CardHeader,
-    CardTitle,
-    CardContent,
-    CardFooter,
-} from '@/components/ui/card'
+import { Card, CardHeader, CardContent, CardFooter } from '@/components/ui/card'
+import { Separator } from '@/components/ui/separator'
+import { useToast } from '@/hooks/use-toast'
 
-import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from '@/components/ui/select'
-import { Separator } from './ui/separator'
 import { CustomInput } from './habit-input'
 
 const formSchema = z.object({
-    what: z.string(),
-    when: z.string(),
-    why: z.string(),
+    what: z.string().min(1, 'This field is required'),
+    when: z.string().min(1, 'This field is required'),
+    why: z.string().min(1, 'This field is required'),
 })
 
 export function CreateHabitForm() {
+    const [isSubmitting, setIsSubmitting] = useState(false)
+    const { toast } = useToast()
+
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
@@ -48,8 +38,15 @@ export function CreateHabitForm() {
         },
     })
 
-    function onSubmit(values: z.infer<typeof formSchema>) {
+    async function onSubmit(values: z.infer<typeof formSchema>) {
+        setIsSubmitting(true)
+
         console.log(values)
+        toast({
+            title: 'Habit created',
+            description: `You will ${values.what} ${values.when} so that you can ${values.why}.`,
+        })
+        setIsSubmitting(false)
     }
 
     return (
@@ -68,10 +65,10 @@ export function CreateHabitForm() {
                                 control={form.control}
                                 name="what"
                                 render={({ field }) => (
-                                    <FormItem>
+                                    <FormItem className="flex-grow">
                                         <FormControl>
                                             <CustomInput
-                                                className=""
+                                                className="w-full"
                                                 {...field}
                                             />
                                         </FormControl>
@@ -85,10 +82,10 @@ export function CreateHabitForm() {
                                 control={form.control}
                                 name="when"
                                 render={({ field }) => (
-                                    <FormItem>
+                                    <FormItem className="flex-grow">
                                         <FormControl>
                                             <CustomInput
-                                                className=""
+                                                className="w-full"
                                                 placeholder=""
                                                 {...field}
                                             />
@@ -106,10 +103,10 @@ export function CreateHabitForm() {
                                 control={form.control}
                                 name="why"
                                 render={({ field }) => (
-                                    <FormItem>
+                                    <FormItem className="flex-grow">
                                         <FormControl>
                                             <CustomInput
-                                                className=""
+                                                className="w-full"
                                                 placeholder=""
                                                 {...field}
                                             />
@@ -121,8 +118,16 @@ export function CreateHabitForm() {
                         </div>
                         <Separator />
                         <CardFooter className="px-0">
-                            <Button type="submit" className="w-full">
-                                Create Habit
+                            <Button
+                                type="submit"
+                                className="w-full"
+                                disabled={isSubmitting}
+                            >
+                                {isSubmitting ? (
+                                    <>Creating Habit...</>
+                                ) : (
+                                    'Create Habit'
+                                )}
                             </Button>
                         </CardFooter>
                     </form>
