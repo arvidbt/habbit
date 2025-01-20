@@ -1,8 +1,8 @@
 'use client'
 import type { Habit } from '@/types/habit'
 import { Check, Ellipsis, Zap } from 'lucide-react'
-import { type AnimationSequence, motion, stagger, useAnimate } from 'motion/react'
-import { useEffect, useState } from 'react'
+import { type AnimationSequence, motion, useAnimate } from 'motion/react'
+import { useState } from 'react'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from './ui/tooltip'
 import { cn } from '@/lib/utils'
 
@@ -11,7 +11,7 @@ interface HabitCardProps {
 }
 
 
-export function HabitCard({ habit }: HabitCardProps) {
+export const HabitCard = ({ habit }: HabitCardProps) => {
   const [scope, animate] = useAnimate()
   const [holdTimeout, setHoldTimeout] = useState<NodeJS.Timeout | null>(null)
   const [isCompleted, setIsCompleted] = useState(false)
