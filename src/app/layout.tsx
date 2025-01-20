@@ -4,6 +4,8 @@ import { Poppins, Bricolage_Grotesque } from 'next/font/google'
 import { type Metadata } from 'next'
 
 import { TRPCReactProvider } from '@/trpc/react'
+
+import { Toaster } from '@/components/ui/toaster'
 import { cn } from '@/lib/utils'
 
 export const metadata: Metadata = {
@@ -36,7 +38,10 @@ export default function RootLayout({
             )}
         >
             <body>
-                <TRPCReactProvider>{children}</TRPCReactProvider>
+                <TRPCReactProvider>
+                    {children}
+                    <Toaster />
+                </TRPCReactProvider>
             </body>
         </html>
     )
