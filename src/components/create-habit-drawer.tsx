@@ -10,6 +10,7 @@ import {
 } from '@/components/ui/drawer'
 import { Button } from './ui/button'
 import { Icons } from './icons'
+import { CreateHabitForm } from './create-habit-form'
 
 export async function CreateHabitDrawer() {
     return (
@@ -21,16 +22,10 @@ export async function CreateHabitDrawer() {
             </DrawerTrigger>
             <DrawerContent>
                 <DrawerHeader>
-                    <DrawerTitle>Are you absolutely sure?</DrawerTitle>
-                    <DrawerDescription>
-                        This action cannot be undone.
-                    </DrawerDescription>
+                    <DrawerTitle></DrawerTitle>
                 </DrawerHeader>
                 <DrawerFooter>
-                    <Button>Submit</Button>
-                    <DrawerClose asChild>
-                        <Button variant="outline">Cancel</Button>
-                    </DrawerClose>
+                    <CreateHabitForm />
                 </DrawerFooter>
             </DrawerContent>
         </Drawer>
