@@ -1,8 +1,8 @@
 'use client'
 import type { Habit } from '@/types/habit'
 import { Check, Ellipsis } from 'lucide-react'
-import { type AnimationSequence, motion, useAnimate } from 'motion/react'
-import { useState } from 'react'
+import { type AnimationSequence, motion, stagger, useAnimate } from 'motion/react'
+import { useEffect, useState } from 'react'
 
 interface HabitCardProps {
   habit: Habit
@@ -60,6 +60,8 @@ export function HabitCard({ habit }: HabitCardProps) {
   }
 
 
+
+
   return (
     <div
       ref={scope}
@@ -72,16 +74,32 @@ export function HabitCard({ habit }: HabitCardProps) {
         className='justify flex inset-0 max-w-md flex-col justify-between absolute items-center px-6 md:px-16 pb-16 shadow-lg'
       >
         <div className="flex flex-col gap-8 mt-2 items-center">
-          <motion.button
-            initial={{ y: -100 }}
-            animate={{ y: 0 }}
+          <button
+            onClick={
+              () => {
+                console.log("open habit editor")
+              }
+            }
           >
             <Ellipsis className="text-text" />
-          </motion.button>
-          <div className="space-y-4 text-text">
-            <p className="font-serif text-4xl font-bold">{habit.habit}</p>
-            <p className="text-xl">{habit.when}</p>
-            <p className="text-2xl">{habit.why}</p>
+          </button>
+          <div
+            id="habit-text-container" className="space-y-4 text-text">
+            <motion.p
+              initial={{ opacity: 0, x: -200 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ ease: [0, 0.71, 0.2, 1.01], duration: 0.5 }}
+              className="font-serif text-4xl font-bold">{habit.habit}</motion.p>
+            <motion.p
+              initial={{ opacity: 0, x: 200 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ ease: [0, 0.71, 0.2, 1.01], duration: 0.5 }}
+              className="text-xl">{habit.when}</motion.p>
+            <motion.p
+              initial={{ opacity: 0, x: -200 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ ease: [0, 0.71, 0.2, 1.01], duration: 0.5 }}
+              className="text-2xl">{habit.why}</motion.p>
           </div>
         </div>
 
@@ -90,6 +108,7 @@ export function HabitCard({ habit }: HabitCardProps) {
           id="check-button"
           initial={{ scale: 0 }}
           animate={{ scale: 1 }}
+          transition={{ delay: 0.5 }}
           onTapStart={() => !isCompleted && handleHoldStart()}
           onTap={handleHoldEnd}
           onTapCancel={handleHoldEnd}
