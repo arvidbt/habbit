@@ -1,9 +1,10 @@
 'use client'
 import type { Habit } from '@/types/habit'
-import { Check, Ellipsis } from 'lucide-react'
+import { Check, Ellipsis, Zap } from 'lucide-react'
 import { type AnimationSequence, motion, stagger, useAnimate } from 'motion/react'
 import { useEffect, useState } from 'react'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from './ui/tooltip'
+import { cn } from '@/lib/utils'
 
 interface HabitCardProps {
   habit: Habit
@@ -29,6 +30,9 @@ export function HabitCard({ habit }: HabitCardProps) {
       ["#check-button", { scale: 0.5 }, { duration: 0.9 }],
       ["#check-button", { scale: 2.5 }, { duration: 0.3 }],
       ["#check-button", { scale: 2 }, { duration: 0.2 }],
+      ["#count", { rotate: 10, scale: 1.1 }, { duration: 0.1 }],
+      ["#count", { rotate: -10, scale: 1.2 }, { duration: 0.2 }],
+      ["#count", { rotate: 0, scale: 1 }, { duration: 0.3 }],
     ] as AnimationSequence
 
     animate(buttonSequence)
@@ -66,9 +70,20 @@ export function HabitCard({ habit }: HabitCardProps) {
   return (
     <div
       ref={scope}
-      className='relative h-[90dvh] w-full max-w-[400px]  bg-white rounded-3xl overflow-clip shadow-lg'
+      className='relative h-[90dvh] max-h-[640px] w-full max-w-[400px]  bg-white rounded-3xl overflow-clip shadow-lg'
     >
-      <span id="backdrop" className='h-0 bottom-[23vh] translate-y-1/2 left-1/2 -translate-x-1/2  absolute rounded-full'>
+      <div
+        id="count"
+        className={cn(isCompleted ? 'from-sapphire to-green' : 'from-sky to-blue',
+          'absolute flex gap-1 items-center px-3 py-1.5 bg-gradient-to-r rounded-xl bg-peach z-50 top-2 right-2')}
+      >
+        <Zap className='size-6' />
+        <p className="text-xl">
+          {habit.completed.length}
+        </p>
+      </div>
+
+      <span id="backdrop" className='h-0 bottom-[25%] translate-y-1/2 left-1/2 -translate-x-1/2  absolute rounded-full'>
       </span>
 
       <div id="content"
