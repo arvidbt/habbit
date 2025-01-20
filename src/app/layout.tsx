@@ -38,7 +38,10 @@ export default function RootLayout({
             )}
         >
             <body>
-                <TRPCReactProvider>{children}</TRPCReactProvider>
+                <TRPCReactProvider>
+                    {children}
+                    <Toaster />
+                </TRPCReactProvider>
             </body>
         </html>
     )
