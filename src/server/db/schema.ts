@@ -116,3 +116,20 @@ export const verificationTokens = createTable(
     compoundKey: primaryKey({ columns: [vt.identifier, vt.token] }),
   })
 )
+
+export const habits = createTable('habit', {
+    id: int('id', { mode: 'number' }).primaryKey({ autoIncrement: true }),
+    what: text('what', { length: 255 }).notNull(),
+    why: text('why', { length: 255 }).notNull(),
+    when: text('when', { length: 255 }).notNull(),
+
+    createdById: text('created_by', { length: 255 })
+        .notNull()
+        .references(() => users.id),
+    createdAt: int('created_at', { mode: 'timestamp' })
+        .default(sql`(unixepoch())`)
+        .notNull(),
+    updatedAt: int('updatedAt', { mode: 'timestamp' }).$onUpdate(
+        () => new Date()
+    ),
+})
