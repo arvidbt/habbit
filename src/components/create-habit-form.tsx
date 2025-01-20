@@ -19,6 +19,7 @@ import { useToast } from '@/hooks/use-toast'
 
 import { CustomInput } from './habit-input'
 import posthog from 'posthog-js'
+import { api } from '@/trpc/react'
 
 const formSchema = z.object({
   what: z.string().min(1, 'This field is required'),
@@ -30,72 +31,33 @@ export function CreateHabitForm() {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const { toast } = useToast()
 
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
-    defaultValues: {
-      what: '',
-      when: '',
-      why: '',
-    },
-  })
+    const utils = api.useUtils()
+    const createHabit = api.habit.create.useMutation({
+        onSuccess: async () => {
+            await utils.habit.invalidate()
+            setIsSubmitting(false)
+        },
+    })
 
-  async function onSubmit(values: z.infer<typeof formSchema>) {
-    setIsSubmitting(true)
-
-    posthog.capture('new-habit-created', { values })
-
-    console.log(values)
-    toast({
-      title: 'Habit created',
-      description: `You will ${values.what} ${values.when} so that you can ${values.why}.`,
+    const form = useForm<z.infer<typeof formSchema>>({
+        resolver: zodResolver(formSchema),
+        defaultValues: {
+            what: '',
+            when: '',
+            why: '',
+        },
     })
 
     setIsSubmitting(false)
   }
 
-  return (
-    <Card className="mx-auto w-full max-w-md bg-base">
-      <CardHeader></CardHeader>
-      <CardContent>
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-3">
-            <div className="flex w-full items-center space-x-2">
-              <p className="whitespace-nowrap">I will</p>
-
-              <FormField
-                control={form.control}
-                name="what"
-                render={({ field }) => (
-                  <FormItem className="flex-grow">
-                    <FormControl>
-                      <CustomInput className="w-full" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
-            <div className="flex w-full items-center space-x-2">
-              <FormField
-                control={form.control}
-                name="when"
-                render={({ field }) => (
-                  <FormItem className="flex-grow">
-                    <FormControl>
-                      <CustomInput
-                        className="w-full"
-                        placeholder=""
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <p className="whitespace-nowrap">so that</p>
-            </div>
-            <div className="flex w-full items-center space-x-2">
-              <p className="whitespace-nowrap">I can</p>
+        console.log(values)
+        createHabit.mutate(values)
+        toast({
+            title: 'Habit created',
+            description: `You will ${values.what} ${values.when} so that you can ${values.why}.`,
+        })
+    }
 
               <FormField
                 control={form.control}
