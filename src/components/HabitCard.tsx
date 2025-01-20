@@ -3,6 +3,7 @@ import type { Habit } from '@/types/habit'
 import { Check, Ellipsis } from 'lucide-react'
 import { type AnimationSequence, motion, stagger, useAnimate } from 'motion/react'
 import { useEffect, useState } from 'react'
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from './ui/tooltip'
 
 interface HabitCardProps {
   habit: Habit
@@ -74,15 +75,24 @@ export function HabitCard({ habit }: HabitCardProps) {
         className='justify flex inset-0 max-w-md flex-col justify-between absolute items-center px-6 md:px-16 pb-16 shadow-lg'
       >
         <div className="flex flex-col gap-8 mt-2 items-center">
-          <button
-            onClick={
-              () => {
-                console.log("open habit editor")
-              }
-            }
-          >
-            <Ellipsis className="text-text" />
-          </button>
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <button
+                  onClick={
+                    () => {
+                      console.log("open habit editor")
+                    }
+                  }
+                >
+                  <Ellipsis className="text-text" />
+                </button>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>Redigera vana</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
           <div
             id="habit-text-container" className="space-y-4 text-text">
             <motion.p
