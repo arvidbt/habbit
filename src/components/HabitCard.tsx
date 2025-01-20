@@ -1,10 +1,8 @@
 'use client'
-
-import { cn } from '@/lib/utils'
 import type { Habit } from '@/types/habit'
 import { Check, Ellipsis } from 'lucide-react'
-import { motion, useAnimate, useAnimation } from 'motion/react'
-import { useEffect, useState } from 'react'
+import { type AnimationSequence, motion, useAnimate } from 'motion/react'
+import { useState } from 'react'
 
 interface HabitCardProps {
   habit: Habit
@@ -16,14 +14,39 @@ export function HabitCard({ habit }: HabitCardProps) {
   const [holdTimeout, setHoldTimeout] = useState<NodeJS.Timeout | null>(null)
   const [isCompleted, setIsCompleted] = useState(false)
 
-  const durationContainer = 0.8
-  const durationButton = 0.8
+  const completedAnimation = () => {
+    animate("#backdrop", {
+      background: " linear-gradient(61deg, rgba(0,18,36,0.8393951330532212) 0%, rgba(17,185,35,1) 35%, rgba(0,255,186,1) 100%)",
+      opacity: 1,
+      height: "175%",
+      aspectRatio: 1 / 1,
+    }, { duration: 0.8 })
+
+    animate("#check-button", { background: "rgba(239, 241, 245, 0)" }, { duration: 0.4 })
+
+    const buttonSequence = [
+      ["#check-button", { scale: 0.5 }, { duration: 0.9 }],
+      ["#check-button", { scale: 2.5 }, { duration: 0.3 }],
+      ["#check-button", { scale: 2 }, { duration: 0.2 }],
+    ] as AnimationSequence
+
+    animate(buttonSequence)
+  }
+
+  const notCompletedAnimation = () => {
+    animate("#backdrop", {
+      height: "0",
+      opacity: 0,
+    }, { duration: 0.8 })
+    animate("#check-button", { scale: 1, background: "rgba(239, 241, 245, 1)" }, { duration: 0.8 })
+  }
+
   const handleHoldStart = () => {
-    animate("#backdrop", { backgroundColor: "green", width: "100%", height: "100%", borderRadius: '1.5rem' }, { duration: durationContainer })
-    animate("#check-button", { backgroundColor: "green", scale: 2 }, { duration: durationButton })
+    completedAnimation()
     setHoldTimeout(setTimeout(() => {
       setIsCompleted(true)
-    }, 3000))
+      console.log('habit completed')
+    }, 1200))
   }
 
   const handleHoldEnd = () => {
@@ -32,39 +55,45 @@ export function HabitCard({ habit }: HabitCardProps) {
       setHoldTimeout(null)
     }
     if (!isCompleted) {
-      animate("#backdrop", { backgroundColor: "white", width: 0, height: 0, borderRadius: '100%' }, { duration: durationContainer })
-      animate("#check-button", { backgroundColor: "white", scale: 1 }, { duration: durationButton })
+      notCompletedAnimation()
     }
   }
+
 
   return (
     <div
       ref={scope}
-      className='grid *:row-start-1 *:col-start-1 bg-white rounded-3xl overflow-clip shadow-lg'
+      className='relative h-[90dvh] w-full max-w-[400px]  bg-white rounded-3xl overflow-clip shadow-lg'
     >
-      <span id="backdrop" className='bg-white w-0 h-0 place-self-center rounded-full'>
+      <span id="backdrop" className='h-0 bottom-[23vh] translate-y-1/2 left-1/2 -translate-x-1/2  absolute rounded-full'>
       </span>
 
-
       <div id="content"
-        className='justify flex w-full max-w-md flex-col items-center px-16 pb-20 shadow-lg'
+        className='justify flex inset-0 max-w-md flex-col justify-between absolute items-center px-6 md:px-16 pb-16 shadow-lg'
       >
-        <Ellipsis className="mb-11 mt-2 text-text" />
-        <div className="space-y-4 text-text">
-          <p className="font-serif text-4xl font-bold">{habit.habit}</p>
-          <p className="text-xl">{habit.when}</p>
-          <p className="text-2xl">{habit.why}</p>
+        <div className="flex flex-col gap-8 mt-2 items-center">
+          <motion.button
+            initial={{ y: -100 }}
+            animate={{ y: 0 }}
+          >
+            <Ellipsis className="text-text" />
+          </motion.button>
+          <div className="space-y-4 text-text">
+            <p className="font-serif text-4xl font-bold">{habit.habit}</p>
+            <p className="text-xl">{habit.when}</p>
+            <p className="text-2xl">{habit.why}</p>
+          </div>
         </div>
 
         <motion.button
+          disabled={isCompleted}
           id="check-button"
-          onContextMenu={(e) => e.preventDefault()}
           initial={{ scale: 0 }}
           animate={{ scale: 1 }}
-          onTapStart={handleHoldStart}
+          onTapStart={() => !isCompleted && handleHoldStart()}
           onTap={handleHoldEnd}
           onTapCancel={handleHoldEnd}
-          className='mt-16 rounded-full bg-base p-12 text-text'
+          className='bg-base rounded-full p-12 text-text'
         >
           <Check className="size-24" />
         </motion.button>

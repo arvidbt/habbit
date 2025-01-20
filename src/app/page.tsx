@@ -15,7 +15,20 @@ export default async function Home() {
 
   return (
     <HydrateClient>
-      <main className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-b from-[#2e026d] to-[#15162c] text-white">
+      <main className="flex min-h-screen flex-col gap-4  items-center justify-center bg-gradient-to-b from-[#2e026d] to-[#15162c] text-white">
+        <HabitCard habit={{
+          habit: "Read for 30 minutes",
+          when: "Every morning after breakfast",
+          why: "To improve knowledge and focus",
+          completed: []
+        }} />
+
+        <HabitCard habit={{
+          habit: "Read for 30 minutes",
+          when: "Every morning after breakfast",
+          why: "To improve knowledge and focus",
+          completed: []
+        }} />
         <HabitCard habit={{
           habit: "Read for 30 minutes",
           when: "Every morning after breakfast",
