@@ -18,6 +18,7 @@ import { Separator } from '@/components/ui/separator'
 import { useToast } from '@/hooks/use-toast'
 
 import { CustomInput } from './habit-input'
+import { api } from '@/trpc/react'
 
 const formSchema = z.object({
     what: z.string().min(1, 'This field is required'),
@@ -28,6 +29,14 @@ const formSchema = z.object({
 export function CreateHabitForm() {
     const [isSubmitting, setIsSubmitting] = useState(false)
     const { toast } = useToast()
+
+    const utils = api.useUtils()
+    const createHabit = api.habit.create.useMutation({
+        onSuccess: async () => {
+            await utils.habit.invalidate()
+            setIsSubmitting(false)
+        },
+    })
 
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
@@ -42,12 +51,11 @@ export function CreateHabitForm() {
         setIsSubmitting(true)
 
         console.log(values)
+        createHabit.mutate(values)
         toast({
             title: 'Habit created',
             description: `You will ${values.what} ${values.when} so that you can ${values.why}.`,
         })
-
-        setIsSubmitting(false)
     }
 
     return (
