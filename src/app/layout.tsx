@@ -8,7 +8,7 @@ import { TRPCReactProvider } from '@/trpc/react'
 import { Toaster } from '@/components/ui/toaster'
 import { cn } from '@/lib/utils'
 
-import { CSPostHogProvider } from './providers'
+import { PostHogProvider } from './providers'
 
 export const metadata: Metadata = {
   title: 'Create T3 App',
@@ -37,10 +37,10 @@ export default function RootLayout({
     >
       <body>
         <TRPCReactProvider>
-          <CSPostHogProvider>
+          <PostHogProvider>
             {children}
             <Toaster />
-          </CSPostHogProvider>
+          </PostHogProvider>
         </TRPCReactProvider>
       </body>
     </html>
