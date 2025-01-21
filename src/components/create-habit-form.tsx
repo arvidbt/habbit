@@ -19,6 +19,7 @@ import { useToast } from '@/hooks/use-toast'
 
 import { CustomInput } from './habit-input'
 import { api } from '@/trpc/react'
+import posthog from 'posthog-js'
 
 const formSchema = z.object({
     what: z.string().min(1, 'This field is required'),

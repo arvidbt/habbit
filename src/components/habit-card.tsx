@@ -1,15 +1,19 @@
 'use client'
-import type { Habit } from '@/types/habit'
 import { Check, Ellipsis, Zap } from 'lucide-react'
 import { type AnimationSequence, motion, useAnimate } from 'motion/react'
 import { useState } from 'react'
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from './ui/tooltip'
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from './ui/tooltip'
 import { cn } from '@/lib/utils'
+import { type Habit } from '@/server/api/routers/habit'
 
 interface HabitCardProps {
   habit: Habit
 }
-
 
 export const HabitCard = ({ habit }: HabitCardProps) => {
   const [scope, animate] = useAnimate()
@@ -17,41 +21,60 @@ export const HabitCard = ({ habit }: HabitCardProps) => {
   const [isCompleted, setIsCompleted] = useState(false)
 
   const completedAnimation = () => {
-    animate("#backdrop", {
-      background: " linear-gradient(61deg, rgba(0,18,36,0.8393951330532212) 0%, rgba(17,185,35,1) 35%, rgba(0,255,186,1) 100%)",
-      opacity: 1,
-      height: "175%",
-      aspectRatio: 1 / 1,
-    }, { duration: 0.8 })
+    animate(
+      '#backdrop',
+      {
+        background:
+          ' linear-gradient(61deg, rgba(0,18,36,0.8393951330532212) 0%, rgba(17,185,35,1) 35%, rgba(0,255,186,1) 100%)',
+        opacity: 1,
+        height: '175%',
+        aspectRatio: 1 / 1,
+      },
+      { duration: 0.8 }
+    )
 
-    animate("#check-button", { background: "rgba(239, 241, 245, 0)" }, { duration: 0.4 })
+    animate(
+      '#check-button',
+      { background: 'rgba(239, 241, 245, 0)' },
+      { duration: 0.4 }
+    )
 
     const buttonSequence = [
-      ["#check-button", { scale: 0.5 }, { duration: 0.9 }],
-      ["#check-button", { scale: 2.5 }, { duration: 0.3 }],
-      ["#check-button", { scale: 2 }, { duration: 0.2 }],
-      ["#count", { rotate: 10, scale: 1.1 }, { duration: 0.1 }],
-      ["#count", { rotate: -10, scale: 1.2 }, { duration: 0.2 }],
-      ["#count", { rotate: 0, scale: 1 }, { duration: 0.3 }],
+      ['#check-button', { scale: 0.5 }, { duration: 0.9 }],
+      ['#check-button', { scale: 2.5 }, { duration: 0.3 }],
+      ['#check-button', { scale: 2 }, { duration: 0.2 }],
+      ['#count', { rotate: 10, scale: 1.1 }, { duration: 0.1 }],
+      ['#count', { rotate: -10, scale: 1.2 }, { duration: 0.2 }],
+      ['#count', { rotate: 0, scale: 1 }, { duration: 0.3 }],
     ] as AnimationSequence
 
     animate(buttonSequence)
   }
 
   const notCompletedAnimation = () => {
-    animate("#backdrop", {
-      height: "0",
-      opacity: 0,
-    }, { duration: 0.8 })
-    animate("#check-button", { scale: 1, background: "rgba(239, 241, 245, 1)" }, { duration: 0.8 })
+    animate(
+      '#backdrop',
+      {
+        height: '0',
+        opacity: 0,
+      },
+      { duration: 0.8 }
+    )
+    animate(
+      '#check-button',
+      { scale: 1, background: 'rgba(239, 241, 245, 1)' },
+      { duration: 0.8 }
+    )
   }
 
   const handleHoldStart = () => {
     completedAnimation()
-    setHoldTimeout(setTimeout(() => {
-      setIsCompleted(true)
-      console.log('habit completed')
-    }, 1200))
+    setHoldTimeout(
+      setTimeout(() => {
+        setIsCompleted(true)
+        console.log('habit completed')
+      }, 1200)
+    )
   }
 
   const handleHoldEnd = () => {
@@ -64,41 +87,39 @@ export const HabitCard = ({ habit }: HabitCardProps) => {
     }
   }
 
-
-
-
   return (
     <div
       ref={scope}
-      className='relative h-[90dvh] max-h-[640px] w-full max-w-[400px]  bg-white rounded-3xl overflow-clip shadow-lg'
+      className="relative h-[90dvh] max-h-[640px] w-full max-w-[400px] overflow-clip rounded-3xl bg-white shadow-lg"
     >
       <div
         id="count"
-        className={cn(isCompleted ? 'from-sapphire to-green' : 'from-sky to-blue',
-          'absolute flex gap-1 items-center px-3 py-1.5 bg-gradient-to-r rounded-xl bg-peach z-50 top-2 right-2')}
+        className={cn(
+          isCompleted ? 'from-sapphire to-green' : 'from-sky to-blue',
+          'absolute right-2 top-2 z-50 flex items-center gap-1 rounded-xl bg-peach bg-gradient-to-r px-3 py-1.5'
+        )}
       >
-        <Zap className='size-6' />
-        <p className="text-xl">
-          {habit.completed.length}
-        </p>
+        <Zap className="size-6" />
+        <p className="text-xl">1</p>
       </div>
 
-      <span id="backdrop" className='h-0 bottom-[25%] translate-y-1/2 left-1/2 -translate-x-1/2  absolute rounded-full'>
-      </span>
+      <span
+        id="backdrop"
+        className="absolute bottom-[25%] left-1/2 h-0 -translate-x-1/2 translate-y-1/2 rounded-full"
+      ></span>
 
-      <div id="content"
-        className='justify flex inset-0 max-w-md flex-col justify-between absolute items-center px-6 md:px-16 pb-16 shadow-lg'
+      <div
+        id="content"
+        className="justify absolute inset-0 flex max-w-md flex-col items-center justify-between px-6 pb-16 shadow-lg md:px-16"
       >
-        <div className="flex flex-col gap-8 mt-2 items-center">
+        <div className="mt-2 flex flex-col items-center gap-8">
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger asChild>
                 <button
-                  onClick={
-                    () => {
-                      console.log("open habit editor")
-                    }
-                  }
+                  onClick={() => {
+                    console.log('open habit editor')
+                  }}
                 >
                   <Ellipsis className="text-text" />
                 </button>
@@ -108,23 +129,31 @@ export const HabitCard = ({ habit }: HabitCardProps) => {
               </TooltipContent>
             </Tooltip>
           </TooltipProvider>
-          <div
-            id="habit-text-container" className="space-y-4 text-text">
+          <div id="habit-text-container" className="space-y-4 text-text">
             <motion.p
               initial={{ opacity: 0, x: -200 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ ease: [0, 0.71, 0.2, 1.01], duration: 0.5 }}
-              className="font-serif text-4xl font-bold">{habit.habit}</motion.p>
+              className="font-serif text-4xl font-bold"
+            >
+              {habit.what}
+            </motion.p>
             <motion.p
               initial={{ opacity: 0, x: 200 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ ease: [0, 0.71, 0.2, 1.01], duration: 0.5 }}
-              className="text-xl">{habit.when}</motion.p>
+              className="text-xl"
+            >
+              {habit.when}
+            </motion.p>
             <motion.p
               initial={{ opacity: 0, x: -200 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ ease: [0, 0.71, 0.2, 1.01], duration: 0.5 }}
-              className="text-2xl">{habit.why}</motion.p>
+              className="text-2xl"
+            >
+              {habit.why}
+            </motion.p>
           </div>
         </div>
 
@@ -137,7 +166,7 @@ export const HabitCard = ({ habit }: HabitCardProps) => {
           onTapStart={() => !isCompleted && handleHoldStart()}
           onTap={handleHoldEnd}
           onTapCancel={handleHoldEnd}
-          className='bg-base rounded-full p-12 text-text'
+          className="rounded-full bg-base p-12 text-text"
         >
           <Check className="size-24" />
         </motion.button>

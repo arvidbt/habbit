@@ -2,7 +2,7 @@ import { z } from 'zod'
 
 import { createTRPCRouter, protectedProcedure } from '@/server/api/trpc'
 import { habits } from '@/server/db/schema'
-import { eq } from 'drizzle-orm'
+import { eq, type InferSelectModel } from 'drizzle-orm'
 
 export const habitRouter = createTRPCRouter({
   create: protectedProcedure
@@ -29,3 +29,5 @@ export const habitRouter = createTRPCRouter({
     return fetchedHabits ?? null
   }),
 })
+
+export type Habit = InferSelectModel<typeof habits>
