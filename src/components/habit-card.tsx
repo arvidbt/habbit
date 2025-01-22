@@ -90,7 +90,7 @@ export const HabitCard = ({ habit }: HabitCardProps) => {
   return (
     <div
       ref={scope}
-      className="relative h-[90dvh] max-h-[640px] w-full max-w-[400px] overflow-clip rounded-3xl bg-white shadow-lg"
+      className="relative h-[80dvh] w-full max-w-[400px] overflow-clip rounded-3xl bg-white shadow-lg"
     >
       <div
         id="count"
@@ -158,6 +158,7 @@ export const HabitCard = ({ habit }: HabitCardProps) => {
         </div>
 
         <motion.button
+          onContextMenu={(e) => e.preventDefault()}
           disabled={isCompleted}
           id="check-button"
           initial={{ scale: 0 }}
