@@ -1,5 +1,4 @@
 'use client'
-import { Check, Ellipsis, Zap } from 'lucide-react'
 import { type AnimationSequence, motion, useAnimate } from 'motion/react'
 import { useState } from 'react'
 import {
@@ -11,6 +10,7 @@ import {
 import { cn } from '@/lib/utils'
 import { type Habit } from '@/server/api/routers/habit'
 import posthog from 'posthog-js'
+import { Icons } from './icons'
 
 interface HabitCardProps {
   habit: Habit
@@ -73,7 +73,7 @@ export const HabitCard = ({ habit }: HabitCardProps) => {
     setHoldTimeout(
       setTimeout(() => {
         setIsCompleted(true)
-        posthog.capture('habit-completed', {id: habit.id})
+        posthog.capture('habit-completed', { id: habit.id })
       }, 1200)
     )
   }
@@ -100,7 +100,7 @@ export const HabitCard = ({ habit }: HabitCardProps) => {
           'absolute right-2 top-2 z-50 flex items-center gap-1 rounded-xl bg-peach bg-gradient-to-r px-3 py-1.5'
         )}
       >
-        <Zap className="size-6" />
+        <Icons.Zap className="size-6" />
         <p className="text-xl">1</p>
       </div>
 
@@ -122,7 +122,7 @@ export const HabitCard = ({ habit }: HabitCardProps) => {
                     console.log('open habit editor')
                   }}
                 >
-                  <Ellipsis className="text-text" />
+                  <Icons.Ellipsis className="text-text" />
                 </button>
               </TooltipTrigger>
               <TooltipContent>
@@ -170,7 +170,7 @@ export const HabitCard = ({ habit }: HabitCardProps) => {
           onTapCancel={handleHoldEnd}
           className="rounded-full bg-base p-12 text-text"
         >
-          <Check className="size-24" />
+          <Icons.Check className="size-24" />
         </motion.button>
       </div>
     </div>
