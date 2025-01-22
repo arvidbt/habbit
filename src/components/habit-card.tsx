@@ -10,6 +10,7 @@ import {
 } from './ui/tooltip'
 import { cn } from '@/lib/utils'
 import { type Habit } from '@/server/api/routers/habit'
+import posthog from 'posthog-js'
 
 interface HabitCardProps {
   habit: Habit
@@ -72,7 +73,7 @@ export const HabitCard = ({ habit }: HabitCardProps) => {
     setHoldTimeout(
       setTimeout(() => {
         setIsCompleted(true)
-        console.log('habit completed')
+        posthog.capture('habit-completed', {id: habit.id})
       }, 1200)
     )
   }
