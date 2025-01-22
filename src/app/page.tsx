@@ -9,8 +9,8 @@ export default async function Home() {
 
   return (
     <HydrateClient>
-      <main className="flex w-full flex-col items-center">
-        <SiteHeader />
+      <SiteHeader />
+      <main className="flex w-full flex-col items-center bg-base">
         <HabitGrid />
         {session && <FloatingNavbar />}
       </main>
