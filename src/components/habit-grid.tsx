@@ -12,7 +12,7 @@ export const HabitGrid = () => {
     <div className="flex min-h-screen w-full flex-col items-center gap-6">
       {habits.map((habit, i) => {
         if (!habit) {
-          return <p key={i}>no habitsius</p>
+          return <p key={i}>Something went wrong when fetching this habit</p>
         }
         return <HabitCard key={i} habit={habit} />
       })}
