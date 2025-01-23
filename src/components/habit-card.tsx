@@ -1,7 +1,7 @@
 'use client'
 import { Check, Ellipsis, Zap } from 'lucide-react'
 import { type AnimationSequence, motion, useAnimate } from 'motion/react'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import {
   Tooltip,
   TooltipContent,
@@ -10,6 +10,8 @@ import {
 } from './ui/tooltip'
 import { cn } from '@/lib/utils'
 import { type Habit } from '@/server/api/routers/habit'
+import { api } from '@/trpc/react'
+
 import posthog from 'posthog-js'
 
 interface HabitCardProps {
@@ -20,6 +22,12 @@ export const HabitCard = ({ habit }: HabitCardProps) => {
   const [scope, animate] = useAnimate()
   const [holdTimeout, setHoldTimeout] = useState<NodeJS.Timeout | null>(null)
   const [isCompleted, setIsCompleted] = useState(false)
+
+  const completeHabit = api.habit.complete.useMutation({
+    onSuccess: async () => {
+      console.log('completed habit')
+    },
+  })
 
   const completedAnimation = () => {
     animate(
@@ -73,7 +81,8 @@ export const HabitCard = ({ habit }: HabitCardProps) => {
     setHoldTimeout(
       setTimeout(() => {
         setIsCompleted(true)
-        posthog.capture('habit-completed', {id: habit.id})
+        completeHabit.mutate({ habitId: habit.id })
+        posthog.capture('habit-completed', { id: habit.id })
       }, 1200)
     )
   }
@@ -134,7 +143,10 @@ export const HabitCard = ({ habit }: HabitCardProps) => {
             <motion.p
               initial={{ opacity: 0, x: -200 }}
               animate={{ opacity: 1, x: 0 }}
-              transition={{ ease: [0, 0.71, 0.2, 1.01], duration: 0.5 }}
+              transition={{
+                ease: [0, 0.71, 0.2, 1.01],
+                duration: 0.5,
+              }}
               className="font-serif text-4xl font-bold"
             >
               {habit.what}
@@ -142,7 +154,10 @@ export const HabitCard = ({ habit }: HabitCardProps) => {
             <motion.p
               initial={{ opacity: 0, x: 200 }}
               animate={{ opacity: 1, x: 0 }}
-              transition={{ ease: [0, 0.71, 0.2, 1.01], duration: 0.5 }}
+              transition={{
+                ease: [0, 0.71, 0.2, 1.01],
+                duration: 0.5,
+              }}
               className="text-xl"
             >
               {habit.when}
@@ -150,7 +165,10 @@ export const HabitCard = ({ habit }: HabitCardProps) => {
             <motion.p
               initial={{ opacity: 0, x: -200 }}
               animate={{ opacity: 1, x: 0 }}
-              transition={{ ease: [0, 0.71, 0.2, 1.01], duration: 0.5 }}
+              transition={{
+                ease: [0, 0.71, 0.2, 1.01],
+                duration: 0.5,
+              }}
               className="text-2xl"
             >
               {habit.why}
