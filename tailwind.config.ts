@@ -1,8 +1,6 @@
 import { type Config } from 'tailwindcss'
-import { fontFamily } from 'tailwindcss/defaultTheme'
 
 export default {
-  darkMode: ['class'],
   content: ['./src/**/*.tsx'],
   theme: {
     extend: {
@@ -15,10 +13,6 @@ export default {
       },
       animation: {
         shine: 'shine 3s ease-out infinite',
-      },
-      fontFamily: {
-        sans: ['var(--font-sans)', ...fontFamily.sans],
-        serif: ['var(--font-serif)', ...fontFamily.serif],
       },
       borderRadius: {
         lg: 'var(--radius)',
@@ -72,7 +66,5 @@ export default {
   plugins: [
     // eslint-disable-next-line @typescript-eslint/no-require-imports
     require('tailwindcss-animate'),
-    // eslint-disable-next-line @typescript-eslint/no-require-imports
-    require('@catppuccin/tailwindcss'),
   ],
 } as Config

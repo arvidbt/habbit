@@ -38,7 +38,7 @@ export const HabitCard = ({ habit }: HabitCardProps) => {
 
     animate(
       '#check-button',
-      { background: 'rgba(239, 241, 245, 0)' },
+      { background: 'rgba(var(--ctp-base),0)' },
       { duration: 0.4 }
     )
 
@@ -65,7 +65,7 @@ export const HabitCard = ({ habit }: HabitCardProps) => {
     )
     animate(
       '#check-button',
-      { scale: 1, background: 'rgba(239, 241, 245, 1)' },
+      { scale: 1, background: 'rgba(var(--ctp-base),1)' },
       { duration: 0.8 }
     )
   }
@@ -93,13 +93,13 @@ export const HabitCard = ({ habit }: HabitCardProps) => {
   return (
     <div
       ref={scope}
-      className="relative h-[80dvh] w-full max-w-[400px] overflow-clip rounded-3xl bg-white shadow-lg"
+      className="relative h-[80dvh] w-full max-w-[400px] overflow-clip rounded-3xl shadow-lg"
     >
       <div
         id="count"
         className={cn(
           isCompleted ? 'from-sapphire to-green' : 'from-sky to-blue',
-          'absolute right-2 top-2 z-50 flex items-center gap-1 rounded-xl bg-peach bg-gradient-to-r px-3 py-1.5'
+          'bg-peach absolute top-2 right-2 z-50 flex items-center gap-1 rounded-xl bg-linear-to-r px-3 py-1.5'
         )}
       >
         <Icons.Zap className="size-6" />
@@ -132,7 +132,7 @@ export const HabitCard = ({ habit }: HabitCardProps) => {
               </TooltipContent>
             </Tooltip>
           </TooltipProvider>
-          <div id="habit-text-container" className="space-y-4 text-text">
+          <div id="habit-text-container" className="text-text space-y-4">
             {isEditing ? (
               <HabitForm habit={habit} onSuccess={() => setIsEditing(false)} />
             ) : (
@@ -151,7 +151,7 @@ export const HabitCard = ({ habit }: HabitCardProps) => {
           onTapStart={() => !isCompleted && handleHoldStart()}
           onTap={handleHoldEnd}
           onTapCancel={handleHoldEnd}
-          className="rounded-full bg-base p-12 text-text"
+          className="text-text rounded-full bg-white p-12"
         >
           <Icons.Check className="size-24" />
         </motion.button>
@@ -182,7 +182,7 @@ const HabitText = ({ habit }: { habit: Habit }) => {
       >
         {capitalizeFirst(habit.when)}
       </motion.p>
-      <p className="italic text-subtext0">so I can</p>
+      <p className="text-subtext0 italic">so I can</p>
       <motion.p
         initial={{ opacity: 0, scale: 0.9 }}
         animate={{ opacity: 1, scale: 1 }}
