@@ -1,5 +1,4 @@
 'use client'
-import { Check, Ellipsis, Zap } from 'lucide-react'
 import { type AnimationSequence, motion, useAnimate } from 'motion/react'
 import { useState } from 'react'
 import {
@@ -11,6 +10,8 @@ import {
 import { cn } from '@/lib/utils'
 import { type Habit } from '@/server/api/routers/habit'
 import posthog from 'posthog-js'
+import { Icons } from './icons'
+import { HabitForm } from './habit-form'
 
 interface HabitCardProps {
   habit: Habit
@@ -20,6 +21,7 @@ export const HabitCard = ({ habit }: HabitCardProps) => {
   const [scope, animate] = useAnimate()
   const [holdTimeout, setHoldTimeout] = useState<NodeJS.Timeout | null>(null)
   const [isCompleted, setIsCompleted] = useState(false)
+  const [isEditing, setIsEditing] = useState(false)
 
   const completedAnimation = () => {
     animate(
@@ -73,7 +75,7 @@ export const HabitCard = ({ habit }: HabitCardProps) => {
     setHoldTimeout(
       setTimeout(() => {
         setIsCompleted(true)
-        posthog.capture('habit-completed', {id: habit.id})
+        posthog.capture('habit-completed', { id: habit.id })
       }, 1200)
     )
   }
@@ -100,7 +102,7 @@ export const HabitCard = ({ habit }: HabitCardProps) => {
           'absolute right-2 top-2 z-50 flex items-center gap-1 rounded-xl bg-peach bg-gradient-to-r px-3 py-1.5'
         )}
       >
-        <Zap className="size-6" />
+        <Icons.Zap className="size-6" />
         <p className="text-xl">1</p>
       </div>
 
@@ -119,10 +121,10 @@ export const HabitCard = ({ habit }: HabitCardProps) => {
               <TooltipTrigger asChild>
                 <button
                   onClick={() => {
-                    console.log('open habit editor')
+                    setIsEditing(!isEditing)
                   }}
                 >
-                  <Ellipsis className="text-text" />
+                  <Icons.Ellipsis className="text-text" />
                 </button>
               </TooltipTrigger>
               <TooltipContent>
@@ -131,30 +133,11 @@ export const HabitCard = ({ habit }: HabitCardProps) => {
             </Tooltip>
           </TooltipProvider>
           <div id="habit-text-container" className="space-y-4 text-text">
-            <motion.p
-              initial={{ opacity: 0, x: -200 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ ease: [0, 0.71, 0.2, 1.01], duration: 0.5 }}
-              className="font-serif text-4xl font-bold"
-            >
-              {habit.what}
-            </motion.p>
-            <motion.p
-              initial={{ opacity: 0, x: 200 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ ease: [0, 0.71, 0.2, 1.01], duration: 0.5 }}
-              className="text-xl"
-            >
-              {habit.when}
-            </motion.p>
-            <motion.p
-              initial={{ opacity: 0, x: -200 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ ease: [0, 0.71, 0.2, 1.01], duration: 0.5 }}
-              className="text-2xl"
-            >
-              {habit.why}
-            </motion.p>
+            {isEditing ? (
+              <HabitForm habit={habit} onSuccess={() => setIsEditing(false)} />
+            ) : (
+              <HabitText habit={habit} />
+            )}
           </div>
         </div>
 
@@ -170,9 +153,44 @@ export const HabitCard = ({ habit }: HabitCardProps) => {
           onTapCancel={handleHoldEnd}
           className="rounded-full bg-base p-12 text-text"
         >
-          <Check className="size-24" />
+          <Icons.Check className="size-24" />
         </motion.button>
       </div>
     </div>
+  )
+}
+
+const HabitText = ({ habit }: { habit: Habit }) => {
+  const capitalizeFirst = (text: string) => {
+    return text.charAt(0).toUpperCase() + text.slice(1)
+  }
+  return (
+    <>
+      <motion.p
+        initial={{ opacity: 0, scale: 0.9 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ ease: [0.2, 0.71, 0.2, 1.01], duration: 0.5 }}
+        className="font-serif text-4xl font-bold"
+      >
+        {capitalizeFirst(habit.what)}
+      </motion.p>
+      <motion.p
+        initial={{ opacity: 0, scale: 0.9 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ ease: [0.2, 0.71, 0.2, 1.01], duration: 0.3, delay: 0.1 }}
+        className="text-xl"
+      >
+        {capitalizeFirst(habit.when)}
+      </motion.p>
+      <p className="italic text-subtext0">so I can</p>
+      <motion.p
+        initial={{ opacity: 0, scale: 0.9 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ ease: [0.2, 0.71, 0.2, 1.01], duration: 0.3, delay: 0.2 }}
+        className="text-2xl"
+      >
+        {capitalizeFirst(habit.why)}
+      </motion.p>
+    </>
   )
 }

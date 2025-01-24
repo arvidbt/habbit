@@ -7,6 +7,9 @@ import {
   LogOut,
   LogIn,
   HelpCircle,
+  Check,
+  Ellipsis,
+  Zap,
 } from 'lucide-react'
 
 export const Icons = {
@@ -18,4 +21,7 @@ export const Icons = {
   LogOut,
   HelpCircle,
   LogIn,
+  Check,
+  Ellipsis,
+  Zap,
 }
