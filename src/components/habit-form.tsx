@@ -178,7 +178,6 @@ export function HabitForm({ habit, onSuccess }: HabitFormProps) {
                   type="button"
                   variant="destructive"
                   className="w-full"
-                  disabled={isSubmitting}
                   onClick={() => {
                     if (habit) {
                       deleteHabit.mutate({ id: habit.id })
