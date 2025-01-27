@@ -93,7 +93,7 @@ export const HabitCard = ({ habit }: HabitCardProps) => {
   return (
     <div
       ref={scope}
-      className="relative h-[80dvh] w-full max-w-[400px] overflow-clip rounded-3xl shadow-lg"
+      className="relative h-[80dvh] w-full max-w-[400px] overflow-clip rounded-3xl bg-white shadow-lg"
     >
       <div
         id="count"
@@ -151,7 +151,7 @@ export const HabitCard = ({ habit }: HabitCardProps) => {
           onTapStart={() => !isCompleted && handleHoldStart()}
           onTap={handleHoldEnd}
           onTapCancel={handleHoldEnd}
-          className="text-text rounded-full bg-white p-12"
+          className="text-text bg-base rounded-full p-12"
         >
           <Icons.Check className="size-24" />
         </motion.button>
