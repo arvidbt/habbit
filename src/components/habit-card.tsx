@@ -15,9 +15,10 @@ import { HabitForm } from './habit-form'
 
 interface HabitCardProps {
   habit: Habit
+  demo?: boolean
 }
 
-export const HabitCard = ({ habit }: HabitCardProps) => {
+export const HabitCard = ({ habit, demo }: HabitCardProps) => {
   const [scope, animate] = useAnimate()
   const [holdTimeout, setHoldTimeout] = useState<NodeJS.Timeout | null>(null)
   const [isCompleted, setIsCompleted] = useState(false)
@@ -93,7 +94,10 @@ export const HabitCard = ({ habit }: HabitCardProps) => {
   return (
     <div
       ref={scope}
-      className="relative h-[80dvh] w-full max-w-[400px] overflow-clip rounded-3xl bg-white shadow-lg"
+      className={cn(
+        'relative h-[80dvh] w-full max-w-[400px] overflow-clip rounded-3xl bg-white shadow-lg',
+        demo && 'h-full'
+      )}
     >
       <div
         id="count"
@@ -108,12 +112,12 @@ export const HabitCard = ({ habit }: HabitCardProps) => {
 
       <span
         id="backdrop"
-        className="absolute bottom-[25%] left-1/2 h-0 -translate-x-1/2 translate-y-1/2 rounded-full"
+        className={cn("absolute bottom-[25%] left-1/2 h-0 -translate-x-1/2 translate-y-1/2 rounded-full", demo && "bottom-[20%]")}
       ></span>
 
       <div
         id="content"
-        className="justify absolute inset-0 flex max-w-md flex-col items-center justify-between px-6 pb-16 shadow-lg md:px-16"
+        className={cn("justify absolute inset-0 flex max-w-md flex-col items-center justify-between px-6 pb-16 shadow-lg md:px-16", demo && "pb-8")}
       >
         <div className="mt-2 flex flex-col items-center gap-8">
           <TooltipProvider>
@@ -151,9 +155,9 @@ export const HabitCard = ({ habit }: HabitCardProps) => {
           onTapStart={() => !isCompleted && handleHoldStart()}
           onTap={handleHoldEnd}
           onTapCancel={handleHoldEnd}
-          className="text-text bg-base rounded-full p-12"
+          className={cn("text-text bg-base rounded-full p-12", demo && "p-10")}
         >
-          <Icons.Check className="size-24" />
+          <Icons.Check className={cn("size-24", demo && "size-18")} />
         </motion.button>
       </div>
     </div>
