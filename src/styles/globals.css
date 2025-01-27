@@ -32,6 +32,7 @@
   --color-mantle: rgba(var(--ctp-mantle));
   --color-crust: rgba(var(--ctp-crust));
 }
+
 /*
   The default border color has changed to `currentColor` in Tailwind CSS v4,
   so we've added these compatibility styles to make sure everything still
@@ -41,6 +42,7 @@
   color utility to any element that depends on these defaults.
 */
 @layer base {
+
   *,
   ::after,
   ::before,
@@ -78,6 +80,7 @@
     --chart-5: 27 87% 67%;
     --radius: 0.5rem;
   }
+
   .dark {
     --background: 240 10% 3.9%;
     --foreground: 0 0% 98%;
@@ -105,11 +108,18 @@
     --chart-5: 340 75% 55%;
   }
 }
+
 @layer base {
   * {
     @apply border-border;
   }
+
   body {
     @apply bg-background text-foreground;
   }
 }
+
+/* Uncomment for debugging */
+/* * {
+  background-color: rgba(0, 0, 255, 0.1);
+} */
