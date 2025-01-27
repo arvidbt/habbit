@@ -10,7 +10,7 @@ export default async function Home() {
   return (
     <HydrateClient>
       <SiteHeader />
-      <main className="flex w-full flex-col items-center bg-base">
+      <main className="mx-auto flex w-full max-w-7xl flex-col items-center">
         <HabitGrid />
         {session && <FloatingNavbar />}
       </main>
