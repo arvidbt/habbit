@@ -105,6 +105,7 @@
     --chart-5: 340 75% 55%;
   }
 }
+
 @layer base {
   * {
     @apply border-border;
@@ -112,4 +113,8 @@
   body {
     @apply bg-background text-foreground;
   }
+}
+
+@utility responsive-grid-* {
+  grid-template-columns: repeat(auto-fit, minmax(--value([ *]), 1fr));
 }
