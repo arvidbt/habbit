@@ -93,7 +93,7 @@ export function HabitForm({ habit, onSuccess }: HabitFormProps) {
   return (
     <Card
       className={cn(
-        'mx-auto w-full max-w-md',
+        'mx-auto w-full max-w-md ',
         habit
           ? 'border-none bg-transparent shadow-none outline-hidden'
           : 'bg-base'

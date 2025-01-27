@@ -7,7 +7,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from './ui/tooltip'
-import { cn } from '@/lib/utils'
+import { capitalizeFirst, cn } from '@/lib/utils'
 import { type Habit } from '@/server/api/routers/habit'
 import posthog from 'posthog-js'
 import { Icons } from './icons'
@@ -45,7 +45,7 @@ export const HabitCard = ({ habit }: HabitCardProps) => {
     const buttonSequence = [
       ['#check-button', { scale: 0.5 }, { duration: 0.9 }],
       ['#check-button', { scale: 2.5 }, { duration: 0.3 }],
-      ['#check-button', { scale: 2 }, { duration: 0.2 }],
+      ['#check-button', { scale: 1.5 }, { duration: 0.2 }],
       ['#count', { rotate: 10, scale: 1.1 }, { duration: 0.1 }],
       ['#count', { rotate: -10, scale: 1.2 }, { duration: 0.2 }],
       ['#count', { rotate: 0, scale: 1 }, { duration: 0.3 }],
@@ -67,6 +67,11 @@ export const HabitCard = ({ habit }: HabitCardProps) => {
       '#check-button',
       { scale: 1, background: 'rgba(var(--ctp-base),1)' },
       { duration: 0.8 }
+    )
+    animate(
+      '#count',
+      { rotate: 0, scale: 1 },
+      { duration: 0.3 }
     )
   }
 
@@ -91,9 +96,12 @@ export const HabitCard = ({ habit }: HabitCardProps) => {
   }
 
   return (
-    <div
+    <motion.div
       ref={scope}
-      className="relative h-[80dvh] max-h-[40rem] w-full overflow-clip rounded-3xl bg-white shadow-lg"
+      className="relative h-[80dvh] max-h-[40rem] w-full max-w-[36rem] overflow-clip rounded-3xl bg-white shadow-lg"
+      initial={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.3 }}
     >
       <div
         id="count"
@@ -113,13 +121,13 @@ export const HabitCard = ({ habit }: HabitCardProps) => {
 
       <div
         id="content"
-        className="justify absolute inset-0 flex flex-col items-center justify-between px-6 pb-16 shadow-lg md:px-16"
+        className="justify absolute inset-0 z-50 flex flex-col items-center justify-between px-6 pb-16 shadow-lg md:px-16"
       >
-        <div className="mt-2 flex flex-col items-center gap-8">
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger asChild>
                 <button
+                className='mt-2'
                   onClick={() => {
                     setIsEditing(!isEditing)
                   }}
@@ -134,36 +142,39 @@ export const HabitCard = ({ habit }: HabitCardProps) => {
           </TooltipProvider>
           <div id="habit-text-container" className="text-text space-y-4">
             {isEditing ? (
+              <motion.div
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.3 }}
+              exit={{ opacity: 0, y: -20 }} 
+              >
               <HabitForm habit={habit} onSuccess={() => setIsEditing(false)} />
+              </motion.div>
             ) : (
               <HabitText habit={habit} />
             )}
           </div>
-        </div>
 
         <motion.button
           onContextMenu={(e) => e.preventDefault()}
           disabled={isCompleted}
+          onTapStart={() => !isCompleted && handleHoldStart()}
+          onTap={handleHoldEnd}
+          onTapCancel={handleHoldEnd}
           id="check-button"
           initial={{ scale: 0 }}
           animate={{ scale: 1 }}
           transition={{ delay: 0.5 }}
-          onTapStart={() => !isCompleted && handleHoldStart()}
-          onTap={handleHoldEnd}
-          onTapCancel={handleHoldEnd}
           className="text-text bg-base rounded-full p-12"
         >
           <Icons.Check className="size-24" />
         </motion.button>
       </div>
-    </div>
+    </motion.div>
   )
 }
 
 const HabitText = ({ habit }: { habit: Habit }) => {
-  const capitalizeFirst = (text: string) => {
-    return text.charAt(0).toUpperCase() + text.slice(1)
-  }
   return (
     <>
       <motion.p
