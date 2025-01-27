@@ -93,7 +93,7 @@ export const HabitCard = ({ habit }: HabitCardProps) => {
   return (
     <div
       ref={scope}
-      className="relative h-[80dvh] w-full max-w-[400px] overflow-clip rounded-3xl bg-white shadow-lg"
+      className="relative h-[80dvh] max-h-[40rem] w-full overflow-clip rounded-3xl bg-white shadow-lg"
     >
       <div
         id="count"
@@ -113,7 +113,7 @@ export const HabitCard = ({ habit }: HabitCardProps) => {
 
       <div
         id="content"
-        className="justify absolute inset-0 flex max-w-md flex-col items-center justify-between px-6 pb-16 shadow-lg md:px-16"
+        className="justify absolute inset-0 flex flex-col items-center justify-between px-6 pb-16 shadow-lg md:px-16"
       >
         <div className="mt-2 flex flex-col items-center gap-8">
           <TooltipProvider>

@@ -9,7 +9,7 @@ export const HabitGrid = () => {
   if (!habits) return <p>Click plus button to add habits</p>
 
   return (
-    <div className="flex min-h-screen w-full flex-col items-center gap-6">
+    <div className="sm:responsive-grid-[23rem] grid min-h-screen w-full items-center gap-6 px-4 md:px-11">
       {habits.map((habit, i) => {
         if (!habit) {
           return <p key={i}>Something went wrong when fetching this habit</p>
