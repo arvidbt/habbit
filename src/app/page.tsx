@@ -49,9 +49,11 @@ function NotLoggedInStartPage() {
           Get started
         </SignInButton >
       </div>
-      <div className='border border-2 border-subtext0 rounded-4xl flex flex-col gap-6 p-11 w-[380px] h-[680px] mx-auto'>
-        <h2 className='text-text text-2xl font-bold'>Your habits</h2>
-        <HabitCard habit={demoHabit} demo />
+      <div className="border border-2 p-2 border-subtext0 bg-subtext0 w-min mx-auto rounded-4xl">
+        <div className='border border-2 border-subtext0 rounded-3xl bg-base flex flex-col gap-6 p-11 w-[380px] h-[680px]'>
+          <h2 className='text-text text-2xl font-bold'>Your habits</h2>
+          <HabitCard habit={demoHabit} demo />
+        </div>
       </div>
     </div>
   )
