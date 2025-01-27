@@ -95,7 +95,7 @@ export function HabitForm({ habit, onSuccess }: HabitFormProps) {
       className={cn(
         'mx-auto w-full max-w-md',
         habit
-          ? 'border-none bg-transparent shadow-none outline-none'
+          ? 'border-none bg-transparent shadow-none outline-hidden'
           : 'bg-base'
       )}
     >
@@ -110,7 +110,7 @@ export function HabitForm({ habit, onSuccess }: HabitFormProps) {
                 control={form.control}
                 name="what"
                 render={({ field }) => (
-                  <FormItem className="flex-grow">
+                  <FormItem className="grow">
                     <FormControl>
                       <CustomInput
                         {...field}
@@ -127,7 +127,7 @@ export function HabitForm({ habit, onSuccess }: HabitFormProps) {
                 control={form.control}
                 name="when"
                 render={({ field }) => (
-                  <FormItem className="flex-grow">
+                  <FormItem className="grow">
                     <FormControl>
                       <CustomInput
                         {...field}
@@ -148,7 +148,7 @@ export function HabitForm({ habit, onSuccess }: HabitFormProps) {
                 control={form.control}
                 name="why"
                 render={({ field }) => (
-                  <FormItem className="flex-grow">
+                  <FormItem className="grow">
                     <FormControl>
                       <CustomInput
                         {...field}
