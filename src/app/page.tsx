@@ -1,3 +1,4 @@
+'use-client'
 import { HydrateClient } from '@/trpc/server'
 import { SiteHeader } from '@/components/site-header'
 import { auth } from '@/server/auth'
@@ -7,6 +8,8 @@ import { SignInButton } from '@/components/sign-in-button'
 import { Icons } from '@/components/icons'
 import { HabitCard } from '@/components/habit-card'
 import { type Habit } from '@/server/api/routers/habit'
+import { PushNotificationManager } from '@/components/push-notification-manager'
+import { InstallPrompt } from '@/components/install-prompt'
 
 export default async function Home() {
   const session = await auth()
@@ -24,6 +27,10 @@ export default async function Home() {
           <NotLoggedInStartPage />
         )}
       </main>
+      <div>
+        <PushNotificationManager />
+        <InstallPrompt />
+      </div>
     </HydrateClient>
   )
 }
