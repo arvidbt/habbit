@@ -38,7 +38,7 @@ export default function RootLayout({
       <body>
         <TRPCReactProvider>
           <PostHogProvider>
-            {children}
+            <div className="bg-base">{children}</div>
             <Toaster />
           </PostHogProvider>
         </TRPCReactProvider>
