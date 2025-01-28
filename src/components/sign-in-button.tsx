@@ -1,13 +1,16 @@
 import { Icons } from './icons'
 import { Button } from './ui/button'
 import { signIn } from '@/server/auth'
-import { PropsWithChildren } from 'react'
+import { type PropsWithChildren } from 'react'
 
 type SignInButtonProps = {
   size?: 'sm' | 'lg'
 } & PropsWithChildren
 
-export function SignInButton({ children = 'Login', size = "sm" }: SignInButtonProps) {
+export function SignInButton({
+  children = 'Login',
+  size = 'sm',
+}: SignInButtonProps) {
   return (
     <form
       action={async () => {
