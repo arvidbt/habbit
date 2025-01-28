@@ -6,7 +6,7 @@ import { cn } from '@/lib/utils'
 
 type CustomInputProps = React.InputHTMLAttributes<HTMLInputElement>
 
-export function CustomInput({ className, ...props }: CustomInputProps) {
+export function CustomInput(props: CustomInputProps) {
   const [isFilled, setIsFilled] = useState(false)
   const [isFocused, setIsFocused] = useState(false)
   const inputRef = useRef<HTMLInputElement>(null)
@@ -26,6 +26,7 @@ export function CustomInput({ className, ...props }: CustomInputProps) {
     props.onBlur?.(e)
   }
 
+  console.log(props.className)
   return (
     <Input
       {...props}
@@ -36,9 +37,9 @@ export function CustomInput({ className, ...props }: CustomInputProps) {
           ? 'bg-mantle px-2 text-black shadow-none placeholder:text-primary-foreground/70'
           : 'bg-base text-foreground',
         !isFilled && !isFocused
-          ? 'rounded-none border-b border-black outline-none'
-          : 'border-input outline-none',
-        className
+          ? 'rounded-none border-b border-black outline-hidden'
+          : 'border-input outline-hidden',
+        props.className
       )}
       onChange={handleChange}
       onFocus={handleFocus}

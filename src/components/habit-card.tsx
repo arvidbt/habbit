@@ -1,5 +1,4 @@
 'use client'
-import { Check, Ellipsis, Zap } from 'lucide-react'
 import { type AnimationSequence, motion, useAnimate } from 'motion/react'
 import { useEffect, useState } from 'react'
 import {
@@ -8,11 +7,13 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from './ui/tooltip'
-import { cn } from '@/lib/utils'
+import { capitalizeFirst, cn } from '@/lib/utils'
 import { type Habit } from '@/server/api/routers/habit'
 import { api } from '@/trpc/react'
 
 import posthog from 'posthog-js'
+import { Icons } from './icons'
+import { HabitForm } from './habit-form'
 
 interface HabitCardProps {
   habit: Habit
@@ -22,6 +23,7 @@ export const HabitCard = ({ habit }: HabitCardProps) => {
   const [scope, animate] = useAnimate()
   const [holdTimeout, setHoldTimeout] = useState<NodeJS.Timeout | null>(null)
   const [isCompleted, setIsCompleted] = useState(false)
+  const [isEditing, setIsEditing] = useState(false)
 
   const completeHabit = api.habit.complete.useMutation({
     onSuccess: async () => {
@@ -44,14 +46,14 @@ export const HabitCard = ({ habit }: HabitCardProps) => {
 
     animate(
       '#check-button',
-      { background: 'rgba(239, 241, 245, 0)' },
+      { background: 'rgba(var(--ctp-base),0)' },
       { duration: 0.4 }
     )
 
     const buttonSequence = [
       ['#check-button', { scale: 0.5 }, { duration: 0.9 }],
       ['#check-button', { scale: 2.5 }, { duration: 0.3 }],
-      ['#check-button', { scale: 2 }, { duration: 0.2 }],
+      ['#check-button', { scale: 1.5 }, { duration: 0.2 }],
       ['#count', { rotate: 10, scale: 1.1 }, { duration: 0.1 }],
       ['#count', { rotate: -10, scale: 1.2 }, { duration: 0.2 }],
       ['#count', { rotate: 0, scale: 1 }, { duration: 0.3 }],
@@ -71,9 +73,10 @@ export const HabitCard = ({ habit }: HabitCardProps) => {
     )
     animate(
       '#check-button',
-      { scale: 1, background: 'rgba(239, 241, 245, 1)' },
+      { scale: 1, background: 'rgba(var(--ctp-base),1)' },
       { duration: 0.8 }
     )
+    animate('#count', { rotate: 0, scale: 1 }, { duration: 0.3 })
   }
 
   const handleHoldStart = () => {
@@ -98,18 +101,21 @@ export const HabitCard = ({ habit }: HabitCardProps) => {
   }
 
   return (
-    <div
+    <motion.div
       ref={scope}
-      className="relative h-[80dvh] w-full max-w-[400px] overflow-clip rounded-3xl bg-white shadow-lg"
+      className="relative h-[80dvh] max-h-[40rem] w-full max-w-[36rem] overflow-clip rounded-3xl bg-white shadow-lg"
+      initial={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.3 }}
     >
       <div
         id="count"
         className={cn(
           isCompleted ? 'from-sapphire to-green' : 'from-sky to-blue',
-          'absolute right-2 top-2 z-50 flex items-center gap-1 rounded-xl bg-peach bg-gradient-to-r px-3 py-1.5'
+          'bg-peach bg-linear-to-r absolute right-2 top-2 z-50 flex items-center gap-1 rounded-xl px-3 py-1.5'
         )}
       >
-        <Zap className="size-6" />
+        <Icons.Zap className="size-6" />
         <p className="text-xl">1</p>
       </div>
 
@@ -120,77 +126,87 @@ export const HabitCard = ({ habit }: HabitCardProps) => {
 
       <div
         id="content"
-        className="justify absolute inset-0 flex max-w-md flex-col items-center justify-between px-6 pb-16 shadow-lg md:px-16"
+        className="justify absolute inset-0 z-50 flex flex-col items-center justify-between px-6 pb-16 shadow-lg md:px-16"
       >
-        <div className="mt-2 flex flex-col items-center gap-8">
-          <TooltipProvider>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <button
-                  onClick={() => {
-                    console.log('open habit editor')
-                  }}
-                >
-                  <Ellipsis className="text-text" />
-                </button>
-              </TooltipTrigger>
-              <TooltipContent>
-                <p>Redigera vana</p>
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
-          <div id="habit-text-container" className="space-y-4 text-text">
-            <motion.p
-              initial={{ opacity: 0, x: -200 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{
-                ease: [0, 0.71, 0.2, 1.01],
-                duration: 0.5,
-              }}
-              className="font-serif text-4xl font-bold"
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <button
+                className="mt-2"
+                onClick={() => {
+                  setIsEditing(!isEditing)
+                }}
+              >
+                <Icons.Ellipsis className="text-text" />
+              </button>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>Redigera vana</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
+        <div id="habit-text-container" className="text-text space-y-4">
+          {isEditing ? (
+            <motion.div
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.3 }}
+              exit={{ opacity: 0, y: -20 }}
             >
-              {habit.what}
-            </motion.p>
-            <motion.p
-              initial={{ opacity: 0, x: 200 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{
-                ease: [0, 0.71, 0.2, 1.01],
-                duration: 0.5,
-              }}
-              className="text-xl"
-            >
-              {habit.when}
-            </motion.p>
-            <motion.p
-              initial={{ opacity: 0, x: -200 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{
-                ease: [0, 0.71, 0.2, 1.01],
-                duration: 0.5,
-              }}
-              className="text-2xl"
-            >
-              {habit.why}
-            </motion.p>
-          </div>
+              <HabitForm habit={habit} onSuccess={() => setIsEditing(false)} />
+            </motion.div>
+          ) : (
+            <HabitText habit={habit} />
+          )}
         </div>
 
         <motion.button
           onContextMenu={(e) => e.preventDefault()}
           disabled={isCompleted}
+          onTapStart={() => !isCompleted && handleHoldStart()}
+          onTap={handleHoldEnd}
+          onTapCancel={handleHoldEnd}
           id="check-button"
           initial={{ scale: 0 }}
           animate={{ scale: 1 }}
           transition={{ delay: 0.5 }}
-          onTapStart={() => !isCompleted && handleHoldStart()}
-          onTap={handleHoldEnd}
-          onTapCancel={handleHoldEnd}
-          className="rounded-full bg-base p-12 text-text"
+          className="text-text bg-base rounded-full p-12"
         >
-          <Check className="size-24" />
+          <Icons.Check className="size-24" />
         </motion.button>
       </div>
-    </div>
+    </motion.div>
+  )
+}
+
+const HabitText = ({ habit }: { habit: Habit }) => {
+  return (
+    <>
+      <motion.p
+        initial={{ opacity: 0, scale: 0.9 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ ease: [0.2, 0.71, 0.2, 1.01], duration: 0.5 }}
+        className="font-serif text-4xl font-bold"
+      >
+        {capitalizeFirst(habit.what)}
+      </motion.p>
+      <motion.p
+        initial={{ opacity: 0, scale: 0.9 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ ease: [0.2, 0.71, 0.2, 1.01], duration: 0.3, delay: 0.1 }}
+        className="text-xl"
+      >
+        {capitalizeFirst(habit.when)}
+      </motion.p>
+      <p className="text-subtext0 italic">so I can</p>
+      <motion.p
+        initial={{ opacity: 0, scale: 0.9 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ ease: [0.2, 0.71, 0.2, 1.01], duration: 0.3, delay: 0.2 }}
+        className="text-2xl"
+      >
+        {capitalizeFirst(habit.why)}
+      </motion.p>
+    </>
   )
 }

@@ -22,6 +22,32 @@ export const habitRouter = createTRPCRouter({
       })
     }),
 
+  update: protectedProcedure
+    .input(
+      z.object({
+        id: z.number(),
+        what: z.string().min(1),
+        why: z.string().min(1),
+        when: z.string().min(1),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      await ctx.db
+        .update(habits)
+        .set({
+          what: input.what,
+          why: input.why,
+          when: input.when,
+        })
+        .where(eq(habits.id, input.id))
+    }),
+
+  delete: protectedProcedure
+    .input(z.object({ id: z.number() }))
+    .mutation(async ({ ctx, input }) => {
+      await ctx.db.delete(habits).where(eq(habits.id, input.id))
+    }),
+
   getHabits: protectedProcedure.query(async ({ ctx }) => {
     const fetchedHabits = await ctx.db.query.habits.findMany({
       where: eq(habits.createdById, ctx.session.user.id),

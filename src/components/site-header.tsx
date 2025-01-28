@@ -7,7 +7,7 @@ import { UserProfileSheet } from './user-dropdown-menu'
 export async function SiteHeader() {
   const session = await auth()
   return (
-    <header role="banner" className="w-screen">
+    <header role="banner" className="w-screen bg-base">
       <div className="flex items-center justify-between p-2">
         <Link href={siteConfig.url}>
           <h1 id="site-title" className="text-2xl font-black">

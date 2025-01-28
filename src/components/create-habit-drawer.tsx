@@ -8,7 +8,7 @@ import {
 } from '@/components/ui/drawer'
 import { Button } from './ui/button'
 import { Icons } from './icons'
-import { CreateHabitForm } from './create-habit-form'
+import { HabitForm } from './habit-form'
 
 export async function CreateHabitDrawer() {
   return (
@@ -23,7 +23,7 @@ export async function CreateHabitDrawer() {
           <DrawerTitle></DrawerTitle>
         </DrawerHeader>
         <DrawerFooter>
-          <CreateHabitForm />
+          <HabitForm />
         </DrawerFooter>
       </DrawerContent>
     </Drawer>

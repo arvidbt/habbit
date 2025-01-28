@@ -5,15 +5,15 @@ import { FloatingNavbar } from '@/components/floating-navbar'
 import { HabitGrid } from '@/components/habit-grid'
 
 export default async function Home() {
-    const session = await auth()
+  const session = await auth()
 
-    return (
-        <HydrateClient>
-            <main className="flex w-full flex-col items-center">
-                <SiteHeader />
-                {session && <HabitGrid />}
-                {session && <FloatingNavbar />}
-            </main>
-        </HydrateClient>
-    )
+  return (
+    <HydrateClient>
+      <SiteHeader />
+      <main className="mx-auto flex min-h-[calc(100vh-48px)] w-full max-w-7xl flex-col items-center pt-4 md:pt-11">
+        {session && <HabitGrid />}
+        {session && <FloatingNavbar />}
+      </main>
+    </HydrateClient>
+  )
 }

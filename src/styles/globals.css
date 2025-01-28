@@ -1,6 +1,55 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import 'tailwindcss';
+
+@config '../../tailwind.config.ts';
+
+@plugin '@catppuccin/tailwindcss';
+
+@theme inline {
+  --color-rosewater: rgba(var(--ctp-rosewater));
+  --color-flamingo: rgba(var(--ctp-flamingo));
+  --color-pink: rgba(var(--ctp-pink));
+  --color-mauve: rgba(var(--ctp-mauve));
+  --color-red: rgba(var(--ctp-red));
+  --color-maroon: rgba(var(--ctp-maroon));
+  --color-peach: rgba(var(--ctp-peach));
+  --color-yellow: rgba(var(--ctp-yellow));
+  --color-green: rgba(var(--ctp-green));
+  --color-teal: rgba(var(--ctp-teal));
+  --color-sky: rgba(var(--ctp-sky));
+  --color-sapphire: rgba(var(--ctp-sapphire));
+  --color-blue: rgba(var(--ctp-blue));
+  --color-lavender: rgba(var(--ctp-lavender));
+  --color-text: rgba(var(--ctp-text));
+  --color-subtext1: rgba(var(--ctp-subtext1));
+  --color-subtext0: rgba(var(--ctp-subtext0));
+  --color-overlay2: rgba(var(--ctp-overlay2));
+  --color-overlay1: rgba(var(--ctp-overlay1));
+  --color-overlay0: rgba(var(--ctp-overlay0));
+  --color-surface2: rgba(var(--ctp-surface2));
+  --color-surface1: rgba(var(--ctp-surface1));
+  --color-surface0: rgba(var(--ctp-surface0));
+  --color-base: rgba(var(--ctp-base));
+  --color-mantle: rgba(var(--ctp-mantle));
+  --color-crust: rgba(var(--ctp-crust));
+}
+/*
+  The default border color has changed to `currentColor` in Tailwind CSS v4,
+  so we've added these compatibility styles to make sure everything still
+  looks the same as it did with Tailwind CSS v3.
+
+  If we ever want to remove these styles, we need to add an explicit border
+  color utility to any element that depends on these defaults.
+*/
+@layer base {
+  *,
+  ::after,
+  ::before,
+  ::backdrop,
+  ::file-selector-button {
+    border-color: var(--color-gray-200, currentColor);
+  }
+}
+
 @layer base {
   :root {
     --background: 0 0% 100%;
@@ -27,7 +76,7 @@
     --chart-3: 197 37% 24%;
     --chart-4: 43 74% 66%;
     --chart-5: 27 87% 67%;
-    --radius: 0.5rem
+    --radius: 0.5rem;
   }
   .dark {
     --background: 240 10% 3.9%;
@@ -53,9 +102,10 @@
     --chart-2: 160 60% 45%;
     --chart-3: 30 80% 55%;
     --chart-4: 280 65% 60%;
-    --chart-5: 340 75% 55%
+    --chart-5: 340 75% 55%;
   }
 }
+
 @layer base {
   * {
     @apply border-border;
@@ -63,4 +113,8 @@
   body {
     @apply bg-background text-foreground;
   }
+}
+
+@utility responsive-grid-* {
+  grid-template-columns: repeat(auto-fit, minmax(--value([ *]), 1fr));
 }
