@@ -40,9 +40,9 @@ function NotLoggedInStartPage() {
   }
 
   return (
-    <div className="flex min-h-[calc(100dvh-48px)] w-full max-w-7xl flex-col items-center justify-between px-6 md:flex-wrap">
-      <div className="flex flex-col items-center gap-11 md:gap-18">
-        <div className="flex flex-col items-center md:items-start">
+    <div className="flex min-h-[calc(100dvh-48px)] w-full max-w-7xl flex-col items-center justify-between px-6 md:flex-row">
+      <div className="flex flex-col items-center gap-10 py-11 md:items-start md:gap-18">
+        <div className="flex flex-col items-center gap-4 md:items-start md:gap-0">
           <h1 className="text-text flex gap-4 font-serif text-8xl font-bold">
             Habbit <Icons.Rabbit className="text-peach size-18 -rotate-12" />
           </h1>
@@ -52,9 +52,15 @@ function NotLoggedInStartPage() {
         </div>
         <SignInButton size="lg">Get started</SignInButton>
       </div>
-      <div className="border-subtext0 bg-subtext0 w-min rounded-4xl border-2 p-2">
-        <div className="border-subtext0 bg-base flex h-[680px] w-[380px] flex-col gap-6 rounded-3xl border-2 p-11">
-          <h2 className="text-text text-2xl font-bold">Your habits</h2>
+
+      <div className="md:bg-subtext0 w-full max-w-md rounded-4xl bg-transparent p-3">
+        <div className="bg-base flex h-[680px] w-full flex-col gap-6 rounded-3xl p-11">
+          <div>
+            <h2 className="text-text text-2xl font-bold">Demo</h2>
+            <p className="text-subtext0">
+              Try out how habits work with Habbits
+            </p>
+          </div>
           <HabitCard habit={demoHabit} demo />
         </div>
       </div>

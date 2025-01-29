@@ -29,7 +29,7 @@ export const HabitCard = ({ habit, demo }: HabitCardProps) => {
       '#backdrop',
       {
         background:
-          ' linear-gradient(61deg, rgba(0,18,36,0.8393951330532212) 0%, rgba(17,185,35,1) 35%, rgba(0,255,186,1) 100%)',
+          ' linear-gradient(61deg, rgba(0,18,36,0.8393951330532212) 0%, rgba(17,185,35,1) 35%, rgba(0,255,186,0.4) 100%)',
         opacity: 1,
         height: '175%',
         aspectRatio: 1 / 1,
@@ -154,7 +154,11 @@ export const HabitCard = ({ habit, demo }: HabitCardProps) => {
               transition={{ duration: 0.3 }}
               exit={{ opacity: 0, y: -20 }}
             >
-              <HabitForm habit={habit} onSuccess={() => setIsEditing(false)} />
+              <HabitForm
+                demo={demo}
+                habit={habit}
+                onSuccess={() => setIsEditing(false)}
+              />
             </motion.div>
           ) : (
             <HabitText habit={habit} />
