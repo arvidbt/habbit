@@ -139,7 +139,9 @@ export const habitCompletions = createTable(
   'habit_completions',
   {
     id: int('id').primaryKey({ autoIncrement: true }),
-    habitId: int('habit_id').references(() => habits.id),
+    habitId: int('habit_id').references(() => habits.id, {
+      onDelete: 'cascade',
+    }),
     completedDate: text('completed_date').notNull(),
   },
   (table) => ({
