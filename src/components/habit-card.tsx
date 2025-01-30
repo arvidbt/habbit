@@ -99,8 +99,8 @@ export const HabitCard = ({ habit, demo }: HabitCardProps) => {
       exit={{ opacity: 0 }}
       transition={{ duration: 0.3 }}
       className={cn(
-        'relative h-[80dvh] w-full max-w-[400px] overflow-clip rounded-3xl bg-white shadow-lg',
-        demo && 'h-full'
+        'relative h-[80dvh] w-full overflow-clip rounded-3xl bg-white shadow-lg',
+        demo && 'h-full max-w-[400px]'
       )}
     >
       <div
@@ -125,7 +125,7 @@ export const HabitCard = ({ habit, demo }: HabitCardProps) => {
       <div
         id="content"
         className={cn(
-          'justify absolute inset-0 flex max-w-md flex-col items-center justify-between px-6 pb-16 shadow-lg md:px-16',
+          'justify absolute inset-0 flex flex-col items-center justify-between px-6 pb-16 shadow-lg md:px-16',
           demo && 'pb-8'
         )}
       >
