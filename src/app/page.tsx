@@ -14,7 +14,7 @@ export default async function Home() {
   return (
     <HydrateClient>
       <SiteHeader />
-      <main className="bg-base flex min-h-[calc(100dvh-48px)] w-full flex-col items-center">
+      <main className="bg-base mx-auto flex min-h-[calc(100dvh-48px)] w-full max-w-7xl flex-col items-center">
         {session ? (
           <>
             <HabitGrid />
@@ -40,7 +40,7 @@ function NotLoggedInStartPage() {
   }
 
   return (
-    <div className="flex min-h-[calc(100dvh-48px)] w-full max-w-7xl flex-col items-center justify-between px-6 md:flex-row">
+    <div className="flex min-h-[calc(100dvh-48px)] w-full flex-col items-center justify-between px-6 md:flex-row">
       <div className="flex flex-col items-center gap-10 py-11 md:items-start md:gap-18">
         <div className="flex flex-col items-center gap-4 md:items-start md:gap-0">
           <h1 className="text-text flex gap-4 font-serif text-8xl font-bold">
