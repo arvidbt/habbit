@@ -10,6 +10,7 @@ import {
   Check,
   Ellipsis,
   Zap,
+  Rabbit
 } from 'lucide-react'
 
 export const Icons = {
@@ -24,4 +25,5 @@ export const Icons = {
   Check,
   Ellipsis,
   Zap,
+  Rabbit
 }
