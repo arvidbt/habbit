@@ -2,7 +2,7 @@ import { z } from 'zod'
 
 import { createTRPCRouter, protectedProcedure } from '@/server/api/trpc'
 import { habitCompletions, habits } from '@/server/db/schema'
-import { eq, sql, type InferSelectModel } from 'drizzle-orm'
+import { eq, type InferSelectModel } from 'drizzle-orm'
 
 export const habitRouter = createTRPCRouter({
   create: protectedProcedure
@@ -75,6 +75,15 @@ export const habitRouter = createTRPCRouter({
         where: eq(habitCompletions.habitId, input.habitId),
       })
       return completedHabit !== null
+    }),
+
+  getCompletionsCount: protectedProcedure
+    .input(z.object({ habitId: z.number() }))
+    .query(async ({ ctx, input }) => {
+      const completions = await ctx.db.query.habitCompletions.findMany({
+        where: eq(habitCompletions.habitId, input.habitId),
+      })
+      return completions.length
     }),
 })
 

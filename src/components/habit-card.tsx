@@ -1,6 +1,6 @@
 'use client'
 import { type AnimationSequence, motion, useAnimate } from 'motion/react'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import {
   Tooltip,
   TooltipContent,
@@ -26,6 +26,10 @@ export const HabitCard = ({ habit, demo, compact }: HabitCardProps) => {
   const [holdTimeout, setHoldTimeout] = useState<NodeJS.Timeout | null>(null)
   const [isCompleted, setIsCompleted] = useState(false)
   const [isEditing, setIsEditing] = useState(false)
+
+  const completions = api.habit.getCompletionsCount.useQuery({
+    habitId: habit.id,
+  }).data
 
   const completeHabit = api.habit.complete.useMutation({
     onSuccess: async () => {
@@ -124,7 +128,7 @@ export const HabitCard = ({ habit, demo, compact }: HabitCardProps) => {
         )}
       >
         <Icons.Zap className="size-6" />
-        <p className="text-xl">1</p>
+        <p className="text-xl">{completions}</p>
       </div>
 
       <span
