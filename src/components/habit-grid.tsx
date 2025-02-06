@@ -12,9 +12,13 @@ export const HabitGrid = () => {
   if (!habits) return <p>Click plus button to add habits</p>
 
   return (
-    <>
-      <Button onClick={() => setCompactView(!compactView)}>
-        {compactView ? 'Big view' : 'Compact view'}{' '}
+    <div className="grid w-full grid-cols-1 gap-8">
+      <Button
+        variant="outline"
+        onClick={() => setCompactView(!compactView)}
+        className="mr-11 place-self-end"
+      >
+        {compactView ? 'Big view' : 'Compact view'}
       </Button>
       <div className="sm:responsive-grid-[23rem] grid w-full items-center gap-6 px-4 md:px-11">
         {habits.map((habit, i) => {
@@ -29,11 +33,11 @@ export const HabitGrid = () => {
               transition={{ duration: 0.5, delay: i * 0.2 }}
               exit={{ opacity: 0, y: -20 }}
             >
-              <HabitCard habit={habit} />
+              <HabitCard habit={habit} compact={compactView} />
             </motion.div>
           )
         })}
       </div>
-    </>
+    </div>
   )
 }
