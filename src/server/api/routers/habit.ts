@@ -74,7 +74,7 @@ export const habitRouter = createTRPCRouter({
       const completedHabit = await ctx.db.query.habitCompletions.findFirst({
         where: eq(habitCompletions.habitId, input.habitId),
       })
-      return completedHabit !== null
+      return completedHabit ? true : false
     }),
 
   getCompletionsCount: protectedProcedure

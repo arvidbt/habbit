@@ -1,6 +1,6 @@
 'use client'
 import { type AnimationSequence, motion, useAnimate } from 'motion/react'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import {
   Tooltip,
   TooltipContent,
@@ -24,16 +24,26 @@ interface HabitCardProps {
 export const HabitCard = ({ habit, demo, compact }: HabitCardProps) => {
   const [scope, animate] = useAnimate()
   const [holdTimeout, setHoldTimeout] = useState<NodeJS.Timeout | null>(null)
-  const [isCompleted, setIsCompleted] = useState(false)
+  const isHabitCompleted = api.habit.isComplete.useQuery({
+    habitId: habit.id,
+  }).data
+  const [isCompleted, setIsCompleted] = useState(isHabitCompleted ?? false)
+
+  // Update isCompleted state when the query result changes
+  useEffect(() => {
+    setIsCompleted(isHabitCompleted ?? false)
+  }, [isHabitCompleted])
   const [isEditing, setIsEditing] = useState(false)
 
   const completions = api.habit.getCompletionsCount.useQuery({
     habitId: habit.id,
   }).data
 
+  const utils = api.useUtils()
   const completeHabit = api.habit.complete.useMutation({
     onSuccess: async () => {
-      console.log('completed habit')
+      await utils.habit.getCompletionsCount.invalidate({ habitId: habit.id })
+      await utils.habit.isComplete.invalidate({ habitId: habit.id })
     },
   })
 
@@ -42,7 +52,7 @@ export const HabitCard = ({ habit, demo, compact }: HabitCardProps) => {
       '#backdrop',
       {
         background:
-          ' linear-gradient(61deg, rgba(0,18,36,0.8393951330532212) 0%, rgba(17,185,35,1) 35%, rgba(0,255,186,0.4) 100%)',
+          'linear-gradient(61deg, rgba(0,18,36,0.8393951330532212) 0%, rgba(17,185,35,1) 35%, rgba(0,255,186,0.4) 100%)',
         opacity: 1,
         height: '300%',
         left: '50%',
@@ -108,6 +118,8 @@ export const HabitCard = ({ habit, demo, compact }: HabitCardProps) => {
     }
   }
 
+  console.log(isCompleted + ' <--' + habit.what)
+
   return (
     <motion.div
       ref={scope}
@@ -136,7 +148,9 @@ export const HabitCard = ({ habit, demo, compact }: HabitCardProps) => {
         className={cn(
           'absolute bottom-[25%] left-1/2 h-0 -translate-x-1/2 translate-y-1/2 rounded-full',
           demo && 'bottom-[20%]',
-          compact && 'bottom-[50%] left-[80%]'
+          compact && 'bottom-[50%] left-[80%]',
+          isCompleted &&
+            'bottom-0 h-full w-[160%] translate-y-0 rounded-none bg-linear-to-tr from-lime-500 via-green-500 to-emerald-500 opacity-100'
         )}
       ></span>
 
@@ -205,7 +219,8 @@ export const HabitCard = ({ habit, demo, compact }: HabitCardProps) => {
             className={cn(
               'text-text bg-base rounded-full p-12',
               demo && 'p-10',
-              compact && 'p-8'
+              compact && 'p-8',
+              isCompleted && 'bg-transparent'
             )}
           >
             <Icons.Check
