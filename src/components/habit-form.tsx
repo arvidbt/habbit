@@ -32,9 +32,10 @@ const formSchema = z.object({
 interface HabitFormProps {
   habit?: Habit
   onSuccess?: () => void
+  demo?: boolean
 }
 
-export function HabitForm({ habit, onSuccess }: HabitFormProps) {
+export function HabitForm({ habit, onSuccess, demo }: HabitFormProps) {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const { toast } = useToast()
 
@@ -93,7 +94,7 @@ export function HabitForm({ habit, onSuccess }: HabitFormProps) {
   return (
     <Card
       className={cn(
-        'mx-auto w-full max-w-md ',
+        'mx-auto w-full max-w-md',
         habit
           ? 'border-none bg-transparent shadow-none outline-hidden'
           : 'bg-base'
@@ -163,7 +164,11 @@ export function HabitForm({ habit, onSuccess }: HabitFormProps) {
             </div>
             <Separator />
             <CardFooter className="flex flex-col gap-4 px-0">
-              <Button type="submit" className="w-full" disabled={isSubmitting}>
+              <Button
+                type="submit"
+                className="w-full"
+                disabled={isSubmitting || demo}
+              >
                 {isSubmitting ? (
                   <>{habit ? 'Updating' : 'Creating'} Habit...</>
                 ) : habit ? (
@@ -178,6 +183,7 @@ export function HabitForm({ habit, onSuccess }: HabitFormProps) {
                   type="button"
                   variant="destructive"
                   className="w-full"
+                  disabled={demo}
                   onClick={() => {
                     if (habit) {
                       deleteHabit.mutate({ id: habit.id })
