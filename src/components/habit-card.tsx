@@ -120,7 +120,7 @@ export const HabitCard = ({ habit, demo, compact }: HabitCardProps) => {
         id="count"
         className={cn(
           isCompleted ? 'from-sapphire to-green' : 'from-sky to-blue',
-          'bg-peach bg-linear-to-r absolute right-2 top-2 z-50 flex items-center gap-1 rounded-xl px-3 py-1.5'
+          'bg-peach absolute top-2 right-2 z-50 flex items-center gap-1 rounded-xl bg-linear-to-r px-3 py-1.5'
         )}
       >
         <Icons.Zap className="size-6" />
