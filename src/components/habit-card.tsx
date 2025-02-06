@@ -1,6 +1,6 @@
 'use client'
 import { type AnimationSequence, motion, useAnimate } from 'motion/react'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import {
   Tooltip,
   TooltipContent,
@@ -9,6 +9,8 @@ import {
 } from './ui/tooltip'
 import { capitalizeFirst, cn } from '@/lib/utils'
 import { type Habit } from '@/server/api/routers/habit'
+import { api } from '@/trpc/react'
+
 import posthog from 'posthog-js'
 import { Icons } from './icons'
 import { HabitForm } from './habit-form'
@@ -23,6 +25,12 @@ export const HabitCard = ({ habit, demo }: HabitCardProps) => {
   const [holdTimeout, setHoldTimeout] = useState<NodeJS.Timeout | null>(null)
   const [isCompleted, setIsCompleted] = useState(false)
   const [isEditing, setIsEditing] = useState(false)
+
+  const completeHabit = api.habit.complete.useMutation({
+    onSuccess: async () => {
+      console.log('completed habit')
+    },
+  })
 
   const completedAnimation = () => {
     animate(
@@ -77,6 +85,7 @@ export const HabitCard = ({ habit, demo }: HabitCardProps) => {
     setHoldTimeout(
       setTimeout(() => {
         setIsCompleted(true)
+        completeHabit.mutate({ habitId: habit.id })
         posthog.capture('habit-completed', { id: habit.id })
       }, 1200)
     )
@@ -107,7 +116,7 @@ export const HabitCard = ({ habit, demo }: HabitCardProps) => {
         id="count"
         className={cn(
           isCompleted ? 'from-sapphire to-green' : 'from-sky to-blue',
-          'bg-peach absolute top-2 right-2 z-50 flex items-center gap-1 rounded-xl bg-linear-to-r px-3 py-1.5'
+          'bg-peach bg-linear-to-r absolute right-2 top-2 z-50 flex items-center gap-1 rounded-xl px-3 py-1.5'
         )}
       >
         <Icons.Zap className="size-6" />

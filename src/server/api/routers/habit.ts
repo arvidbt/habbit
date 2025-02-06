@@ -1,8 +1,8 @@
 import { z } from 'zod'
 
 import { createTRPCRouter, protectedProcedure } from '@/server/api/trpc'
-import { habits } from '@/server/db/schema'
-import { eq, type InferSelectModel } from 'drizzle-orm'
+import { habitCompletions, habits } from '@/server/db/schema'
+import { eq, sql, type InferSelectModel } from 'drizzle-orm'
 
 export const habitRouter = createTRPCRouter({
   create: protectedProcedure
@@ -54,6 +54,28 @@ export const habitRouter = createTRPCRouter({
     })
     return fetchedHabits ?? null
   }),
+
+  complete: protectedProcedure
+    .input(z.object({ habitId: z.number() }))
+    .mutation(async ({ ctx, input }) => {
+      await ctx.db
+        .insert(habitCompletions)
+        .values({
+          habitId: input.habitId,
+          completedDate:
+            new Date().toISOString().split('T')[0]?.toString() ?? '',
+        })
+        .onConflictDoNothing()
+    }),
+
+  isComplete: protectedProcedure
+    .input(z.object({ habitId: z.number() }))
+    .query(async ({ ctx, input }) => {
+      const completedHabit = await ctx.db.query.habitCompletions.findFirst({
+        where: eq(habitCompletions.habitId, input.habitId),
+      })
+      return completedHabit !== null
+    }),
 })
 
 export type Habit = InferSelectModel<typeof habits>

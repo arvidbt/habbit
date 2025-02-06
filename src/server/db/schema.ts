@@ -5,6 +5,7 @@ import {
   primaryKey,
   sqliteTableCreator,
   text,
+  unique,
 } from 'drizzle-orm/sqlite-core'
 import { type AdapterAccount } from 'next-auth/adapters'
 
@@ -118,18 +119,46 @@ export const verificationTokens = createTable(
 )
 
 export const habits = createTable('habit', {
-    id: int('id', { mode: 'number' }).primaryKey({ autoIncrement: true }),
-    what: text('what', { length: 255 }).notNull(),
-    why: text('why', { length: 255 }).notNull(),
-    when: text('when', { length: 255 }).notNull(),
+  id: int('id', { mode: 'number' }).primaryKey({ autoIncrement: true }),
+  what: text('what', { length: 255 }).notNull(),
+  why: text('why', { length: 255 }).notNull(),
+  when: text('when', { length: 255 }).notNull(),
 
-    createdById: text('created_by', { length: 255 })
-        .notNull()
-        .references(() => users.id),
-    createdAt: int('created_at', { mode: 'timestamp' })
-        .default(sql`(unixepoch())`)
-        .notNull(),
-    updatedAt: int('updatedAt', { mode: 'timestamp' }).$onUpdate(
-        () => new Date()
-    ),
+  createdById: text('created_by', { length: 255 })
+    .notNull()
+    .references(() => users.id),
+  createdAt: int('created_at', { mode: 'timestamp' })
+    .default(sql`(unixepoch())`)
+    .notNull(),
+  updatedAt: int('updatedAt', { mode: 'timestamp' }).$onUpdate(
+    () => new Date()
+  ),
 })
+
+export const habitCompletions = createTable(
+  'habit_completions',
+  {
+    id: int('id').primaryKey({ autoIncrement: true }),
+    habitId: int('habit_id').references(() => habits.id, {
+      onDelete: 'cascade',
+    }),
+    completedDate: text('completed_date').notNull(),
+  },
+  (table) => ({
+    uniqueHabitDate: unique().on(table.habitId, table.completedDate),
+  })
+)
+
+export const habitsRelations = relations(habits, ({ many }) => ({
+  completions: many(habitCompletions),
+}))
+
+export const habitCompletionsRelations = relations(
+  habitCompletions,
+  ({ one }) => ({
+    habit: one(habits, {
+      fields: [habitCompletions.habitId],
+      references: [habits.id],
+    }),
+  })
+)
