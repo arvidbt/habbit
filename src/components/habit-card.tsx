@@ -52,7 +52,7 @@ export const HabitCard = ({ habit, demo, compact }: HabitCardProps) => {
       '#backdrop',
       {
         background:
-          'linear-gradient(61deg, rgba(0,18,36,0.8393951330532212) 0%, rgba(17,185,35,1) 35%, rgba(0,255,186,0.4) 100%)',
+          'linear-gradient(45deg, var(--color-lime-500) 0%, var(--color-green-500) 50%, var(--color-emerald-500) 100%)',
         opacity: 1,
         height: '300%',
         left: '50%',
