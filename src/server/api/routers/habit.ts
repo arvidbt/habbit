@@ -85,6 +85,33 @@ export const habitRouter = createTRPCRouter({
       })
       return completions.length
     }),
+
+  getBatchCompletionStatus: protectedProcedure
+    .input(z.object({ habitIds: z.array(z.number()) }))
+    .query(async ({ ctx, input }) => {
+      const today = new Date().toISOString().split('T')[0]?.toString() ?? ''
+
+      const completions = await ctx.db.query.habitCompletions.findMany({
+        where: eq(habitCompletions.completedDate, today),
+      })
+
+      // Create a map of habitId -> completion status
+      return input.habitIds.map((id) =>
+        completions.some((completion) => completion.habitId === id)
+      )
+    }),
+
+  getBatchCompletionCounts: protectedProcedure
+    .input(z.object({ habitIds: z.array(z.number()) }))
+    .query(async ({ ctx, input }) => {
+      const completions = await ctx.db.query.habitCompletions.findMany()
+
+      // Create a map of habitId -> completion count
+      return input.habitIds.map(
+        (id) =>
+          completions.filter((completion) => completion.habitId === id).length
+      )
+    }),
 })
 
 export type Habit = InferSelectModel<typeof habits>

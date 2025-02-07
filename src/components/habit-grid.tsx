@@ -8,6 +8,15 @@ import { Button } from './ui/button'
 export const HabitGrid = () => {
   const [compactView, setCompactView] = useState(false)
   const habits = api.habit.getHabits.useQuery().data
+  const habitIds = habits?.map((h) => h.id) ?? []
+  const completionStatus = api.habit.getBatchCompletionStatus.useQuery(
+    { habitIds },
+    { enabled: !!habits?.length }
+  )
+  const completionCounts = api.habit.getBatchCompletionCounts.useQuery(
+    { habitIds },
+    { enabled: !!habits?.length }
+  )
 
   if (!habits) return <p>Click plus button to add habits</p>
 
@@ -33,7 +42,12 @@ export const HabitGrid = () => {
               transition={{ duration: 0.5, delay: i * 0.2 }}
               exit={{ opacity: 0, y: -20 }}
             >
-              <HabitCard habit={habit} compact={compactView} />
+              <HabitCard
+                habit={habit}
+                compact={compactView}
+                isCompleted={completionStatus.data?.[i] ?? false}
+                completions={completionCounts.data?.[i] ?? 0}
+              />
             </motion.div>
           )
         })}

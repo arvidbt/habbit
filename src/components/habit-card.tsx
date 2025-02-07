@@ -1,6 +1,6 @@
 'use client'
 import { type AnimationSequence, motion, useAnimate } from 'motion/react'
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import {
   Tooltip,
   TooltipContent,
@@ -17,33 +17,28 @@ import { HabitForm } from './habit-form'
 
 interface HabitCardProps {
   habit: Habit
-  demo?: boolean
   compact?: boolean
+  isCompleted: boolean
+  completions?: number
 }
 
-export const HabitCard = ({ habit, demo, compact }: HabitCardProps) => {
+export const HabitCard = ({
+  habit,
+  compact,
+  isCompleted,
+  completions,
+}: HabitCardProps) => {
   const [scope, animate] = useAnimate()
   const [holdTimeout, setHoldTimeout] = useState<NodeJS.Timeout | null>(null)
-  const isHabitCompleted = api.habit.isComplete.useQuery({
-    habitId: habit.id,
-  }).data
-  const [isCompleted, setIsCompleted] = useState(isHabitCompleted ?? false)
-
-  // Update isCompleted state when the query result changes
-  useEffect(() => {
-    setIsCompleted(isHabitCompleted ?? false)
-  }, [isHabitCompleted])
   const [isEditing, setIsEditing] = useState(false)
-
-  const completions = api.habit.getCompletionsCount.useQuery({
-    habitId: habit.id,
-  }).data
 
   const utils = api.useUtils()
   const completeHabit = api.habit.complete.useMutation({
     onSuccess: async () => {
-      await utils.habit.getCompletionsCount.invalidate({ habitId: habit.id })
-      await utils.habit.isComplete.invalidate({ habitId: habit.id })
+      await Promise.all([
+        utils.habit.getBatchCompletionCounts.invalidate(),
+        utils.habit.getBatchCompletionStatus.invalidate(),
+      ])
     },
   })
 
@@ -80,6 +75,7 @@ export const HabitCard = ({ habit, demo, compact }: HabitCardProps) => {
   }
 
   const notCompletedAnimation = () => {
+    if (isCompleted) return
     animate(
       '#backdrop',
       {
@@ -97,14 +93,16 @@ export const HabitCard = ({ habit, demo, compact }: HabitCardProps) => {
     animate('#count', { rotate: 0, scale: 1 }, { duration: 0.3 })
   }
 
+  const ANIMATION_DURATION = 0.9 + 0.3 + 0.2 + 0.1 + 0.2 + 0.3 // Sum of all animation durations
+  const ANIMATION_TIMEOUT = ANIMATION_DURATION * 1000 // Convert to milliseconds
+
   const handleHoldStart = () => {
     completedAnimation()
     setHoldTimeout(
       setTimeout(() => {
-        setIsCompleted(true)
         completeHabit.mutate({ habitId: habit.id })
         posthog.capture('habit-completed', { id: habit.id })
-      }, 1200)
+      }, ANIMATION_TIMEOUT)
     )
   }
 
@@ -126,8 +124,7 @@ export const HabitCard = ({ habit, demo, compact }: HabitCardProps) => {
       transition={{ duration: 0.3 }}
       className={cn(
         'relative w-full overflow-clip rounded-3xl bg-white shadow-lg',
-        compact ? 'max-w[600px] h-[200px]' : 'h-[75vh] md:h-[44rem]',
-        demo && 'h-full max-w-[400px]'
+        compact ? 'max-w[600px] h-[200px]' : 'h-[75vh] md:h-[44rem]'
       )}
     >
       <div
@@ -145,7 +142,6 @@ export const HabitCard = ({ habit, demo, compact }: HabitCardProps) => {
         id="backdrop"
         className={cn(
           'absolute bottom-[25%] left-1/2 h-0 -translate-x-1/2 translate-y-1/2 rounded-full',
-          demo && 'bottom-[20%]',
           compact && 'bottom-[50%] left-[80%]',
           isCompleted &&
             'bottom-0 h-full w-[160%] translate-y-0 rounded-none bg-linear-to-tr from-lime-500 via-green-500 to-emerald-500 opacity-100'
@@ -156,7 +152,6 @@ export const HabitCard = ({ habit, demo, compact }: HabitCardProps) => {
         id="content"
         className={cn(
           'justify absolute inset-0 flex flex-col items-center gap-11 px-6 pb-16 shadow-lg md:px-16',
-          demo && 'pb-8',
           compact && 'pb-0'
         )}
       >
@@ -194,7 +189,6 @@ export const HabitCard = ({ habit, demo, compact }: HabitCardProps) => {
                 exit={{ opacity: 0, y: -20 }}
               >
                 <HabitForm
-                  demo={demo}
                   habit={habit}
                   onSuccess={() => setIsEditing(false)}
                 />
@@ -216,14 +210,11 @@ export const HabitCard = ({ habit, demo, compact }: HabitCardProps) => {
             transition={{ delay: 0.5 }}
             className={cn(
               'text-text bg-base rounded-full p-12',
-              demo && 'p-10',
               compact && 'p-8',
               isCompleted && 'bg-transparent'
             )}
           >
-            <Icons.Check
-              className={cn('size-24', demo && 'size-18', compact && 'size-12')}
-            />
+            <Icons.Check className={cn('size-24', compact && 'size-12')} />
           </motion.button>
         </div>
       </div>
