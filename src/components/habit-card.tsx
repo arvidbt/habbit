@@ -53,7 +53,7 @@ export const HabitCard = ({
         left: '50%',
         aspectRatio: 1 / 1,
       },
-      { duration: 0.8 }
+      { duration: 1 }
     )
 
     animate(
@@ -93,16 +93,13 @@ export const HabitCard = ({
     animate('#count', { rotate: 0, scale: 1 }, { duration: 0.3 })
   }
 
-  const ANIMATION_DURATION = 0.9 + 0.3 + 0.2 + 0.1 + 0.2 + 0.3 // Sum of all animation durations
-  const ANIMATION_TIMEOUT = ANIMATION_DURATION * 1000 // Convert to milliseconds
-
   const handleHoldStart = () => {
     completedAnimation()
     setHoldTimeout(
       setTimeout(() => {
         completeHabit.mutate({ habitId: habit.id })
         posthog.capture('habit-completed', { id: habit.id })
-      }, ANIMATION_TIMEOUT)
+      }, 700)
     )
   }
 

@@ -9,6 +9,7 @@ export const HabitGrid = () => {
   const [compactView, setCompactView] = useState(false)
   const habits = api.habit.getHabits.useQuery().data
   const habitIds = habits?.map((h) => h.id) ?? []
+
   const completionStatus = api.habit.getBatchCompletionStatus.useQuery(
     { habitIds },
     { enabled: !!habits?.length }
