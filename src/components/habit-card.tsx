@@ -9,9 +9,6 @@ import {
 } from './ui/tooltip'
 import { capitalizeFirst, cn } from '@/lib/utils'
 import { type Habit } from '@/server/api/routers/habit'
-import { api } from '@/trpc/react'
-
-import posthog from 'posthog-js'
 import { Icons } from './icons'
 import { HabitForm } from './habit-form'
 
@@ -20,27 +17,13 @@ interface HabitCardProps {
   compact?: boolean
   isCompleted: boolean
   completions?: number
+  onComplete: (habitId: number) => void
 }
 
-export const HabitCard = ({
-  habit,
-  compact,
-  isCompleted,
-  completions,
-}: HabitCardProps) => {
+export const HabitCard = (props: HabitCardProps) => {
   const [scope, animate] = useAnimate()
   const [holdTimeout, setHoldTimeout] = useState<NodeJS.Timeout | null>(null)
   const [isEditing, setIsEditing] = useState(false)
-
-  const utils = api.useUtils()
-  const completeHabit = api.habit.complete.useMutation({
-    onSuccess: async () => {
-      await Promise.all([
-        utils.habit.getBatchCompletionCounts.invalidate(),
-        utils.habit.getBatchCompletionStatus.invalidate(),
-      ])
-    },
-  })
 
   const completedAnimation = () => {
     animate(
@@ -75,13 +58,13 @@ export const HabitCard = ({
   }
 
   const notCompletedAnimation = () => {
-    if (isCompleted) return
+    if (props.isCompleted) return
     animate(
       '#backdrop',
       {
         height: '0',
         opacity: 0,
-        left: compact ? '80%' : '50%',
+        left: props.compact ? '80%' : '50%',
       },
       { duration: 0.8 }
     )
@@ -97,8 +80,7 @@ export const HabitCard = ({
     completedAnimation()
     setHoldTimeout(
       setTimeout(() => {
-        completeHabit.mutate({ habitId: habit.id })
-        posthog.capture('habit-completed', { id: habit.id })
+        props.onComplete(props.habit.id)
       }, 700)
     )
   }
@@ -108,7 +90,7 @@ export const HabitCard = ({
       clearTimeout(holdTimeout)
       setHoldTimeout(null)
     }
-    if (!isCompleted) {
+    if (!props.isCompleted) {
       notCompletedAnimation()
     }
   }
@@ -121,26 +103,26 @@ export const HabitCard = ({
       transition={{ duration: 0.3 }}
       className={cn(
         'relative w-full overflow-clip rounded-3xl bg-white shadow-lg',
-        compact ? 'max-w[600px] h-[200px]' : 'h-[75vh] md:h-[44rem]'
+        props.compact ? 'max-w[600px] h-[200px]' : 'h-[75vh] md:h-[44rem]'
       )}
     >
       <div
         id="count"
         className={cn(
-          isCompleted ? 'from-sapphire to-green' : 'from-sky to-blue',
+          props.isCompleted ? 'from-sapphire to-green' : 'from-sky to-blue',
           'bg-peach absolute top-2 right-2 z-50 flex items-center gap-1 rounded-xl bg-linear-to-r px-3 py-1.5'
         )}
       >
         <Icons.Zap className="size-6" />
-        <p className="text-xl">{completions}</p>
+        <p className="text-xl">{props.completions}</p>
       </div>
 
       <span
         id="backdrop"
         className={cn(
           'absolute bottom-[25%] left-1/2 h-0 -translate-x-1/2 translate-y-1/2 rounded-full',
-          compact && 'bottom-[50%] left-[80%]',
-          isCompleted &&
+          props.compact && 'bottom-[50%] left-[80%]',
+          props.isCompleted &&
             'bottom-0 h-full w-[160%] translate-y-0 rounded-none bg-linear-to-tr from-lime-500 via-green-500 to-emerald-500 opacity-100'
         )}
       ></span>
@@ -149,10 +131,10 @@ export const HabitCard = ({
         id="content"
         className={cn(
           'justify absolute inset-0 flex flex-col items-center gap-11 px-6 pb-16 shadow-lg md:px-16',
-          compact && 'pb-0'
+          props.compact && 'pb-0'
         )}
       >
-        {!compact && (
+        {!props.compact && (
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger asChild>
@@ -174,11 +156,11 @@ export const HabitCard = ({
         <div
           className={cn(
             'flex h-full min-w-1/2 flex-col items-center justify-between',
-            compact && 'w-full flex-row items-center justify-between'
+            props.compact && 'w-full flex-row items-center justify-between'
           )}
         >
           <div id="habit-text-container" className="text-text w-full space-y-4">
-            {isEditing && !compact ? (
+            {isEditing && !props.compact ? (
               <motion.div
                 initial={{ opacity: 0, y: -10 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -186,19 +168,19 @@ export const HabitCard = ({
                 exit={{ opacity: 0, y: -20 }}
               >
                 <HabitForm
-                  habit={habit}
+                  habit={props.habit}
                   onSuccess={() => setIsEditing(false)}
                 />
               </motion.div>
             ) : (
-              <HabitText habit={habit} compact={compact} />
+              <HabitText habit={props.habit} compact={props.compact} />
             )}
           </div>
 
           <motion.button
             onContextMenu={(e) => e.preventDefault()}
-            disabled={isCompleted}
-            onTapStart={() => !isCompleted && handleHoldStart()}
+            disabled={props.isCompleted}
+            onTapStart={() => !props.isCompleted && handleHoldStart()}
             onTap={handleHoldEnd}
             onTapCancel={handleHoldEnd}
             id="check-button"
@@ -207,11 +189,13 @@ export const HabitCard = ({
             transition={{ delay: 0.5 }}
             className={cn(
               'text-text bg-base rounded-full p-12',
-              compact && 'p-8',
-              isCompleted && 'bg-transparent'
+              props.compact && 'p-8',
+              props.isCompleted && 'bg-transparent'
             )}
           >
-            <Icons.Check className={cn('size-24', compact && 'size-12')} />
+            <Icons.Check
+              className={cn('size-24', props.compact && 'size-12')}
+            />
           </motion.button>
         </div>
       </div>

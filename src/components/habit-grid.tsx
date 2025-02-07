@@ -4,6 +4,7 @@ import { HabitCard } from './habit-card'
 import { api } from '@/trpc/react'
 import { motion } from 'motion/react'
 import { Button } from './ui/button'
+import posthog from 'posthog-js'
 
 export const HabitGrid = () => {
   const [compactView, setCompactView] = useState(false)
@@ -18,6 +19,21 @@ export const HabitGrid = () => {
     { habitIds },
     { enabled: !!habits?.length }
   )
+
+  const utils = api.useUtils()
+  const completeHabit = api.habit.complete.useMutation({
+    onSuccess: async () => {
+      await Promise.all([
+        utils.habit.getBatchCompletionCounts.invalidate(),
+        utils.habit.getBatchCompletionStatus.invalidate(),
+      ])
+    },
+  })
+
+  const handleComplete = (habitId: number) => {
+    completeHabit.mutate({ habitId })
+    posthog.capture('habit-completed', { id: habitId })
+  }
 
   if (!habits) return <p>Click plus button to add habits</p>
 
@@ -48,6 +64,7 @@ export const HabitGrid = () => {
                 compact={compactView}
                 isCompleted={completionStatus.data?.[i] ?? false}
                 completions={completionCounts.data?.[i] ?? 0}
+                onComplete={handleComplete}
               />
             </motion.div>
           )
