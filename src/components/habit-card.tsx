@@ -118,8 +118,6 @@ export const HabitCard = ({ habit, demo, compact }: HabitCardProps) => {
     }
   }
 
-  console.log(isCompleted + ' <--' + habit.what)
-
   return (
     <motion.div
       ref={scope}
