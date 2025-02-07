@@ -186,7 +186,9 @@ export const HabitCard = ({ habit, demo }: HabitCardProps) => {
           transition={{ delay: 0.5 }}
           className={cn('text-text bg-base rounded-full p-12', demo && 'p-10')}
         >
-          <Icons.Check className={cn('size-24', demo && 'size-18')} />
+          <Icons.Check
+            className={cn('size-24 select-none', demo && 'size-18')}
+          />
         </motion.button>
       </div>
     </motion.div>
