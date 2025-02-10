@@ -24,6 +24,7 @@ export const HabitCard = (props: HabitCardProps) => {
   const [scope, animate] = useAnimate()
   const [holdTimeout, setHoldTimeout] = useState<NodeJS.Timeout | null>(null)
   const [isEditing, setIsEditing] = useState(false)
+  const [localComplete, setLocalComplete] = useState(false)
 
   const completedAnimation = () => {
     animate(
@@ -81,6 +82,7 @@ export const HabitCard = (props: HabitCardProps) => {
     setHoldTimeout(
       setTimeout(() => {
         props.onComplete(props.habit.id)
+        setLocalComplete(true)
       }, 700)
     )
   }
@@ -90,7 +92,7 @@ export const HabitCard = (props: HabitCardProps) => {
       clearTimeout(holdTimeout)
       setHoldTimeout(null)
     }
-    if (!props.isCompleted) {
+    if (!localComplete) {
       notCompletedAnimation()
     }
   }
@@ -123,7 +125,7 @@ export const HabitCard = (props: HabitCardProps) => {
           'absolute bottom-[25%] left-1/2 h-0 -translate-x-1/2 translate-y-1/2 rounded-full',
           props.compact && 'bottom-[50%] left-[80%]',
           props.isCompleted &&
-            'bottom-0 h-full w-[160%] translate-y-0 rounded-none bg-linear-to-tr from-lime-500 via-green-500 to-emerald-500 opacity-100'
+            'bottom-0 aspect-square h-[300%] translate-y-0 rounded-none bg-linear-to-tr from-lime-500 via-green-500 to-emerald-500 opacity-100'
         )}
       ></span>
 
