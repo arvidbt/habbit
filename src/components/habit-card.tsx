@@ -130,7 +130,7 @@ export const HabitCard = (props: HabitCardProps) => {
           'absolute bottom-[25%] left-1/2 aspect-square h-0 -translate-x-1/2 translate-y-1/2 rounded-full',
           props.compact && 'bottom-[50%] left-[80%]',
           props.isCompleted &&
-            'bottom-0 h-[300%] translate-y-0 rounded-none bg-linear-to-tr from-lime-500 via-green-500 to-emerald-500 opacity-100'
+            'left-1/2 h-[300%] rounded-none bg-linear-to-tr from-lime-500 via-green-500 to-emerald-500 opacity-100'
         )}
       ></span>
 
