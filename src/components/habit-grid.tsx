@@ -31,8 +31,8 @@ export const HabitGrid = () => {
   })
 
   const handleComplete = (habitId: number) => {
-    completeHabit.mutate({ habitId })
     posthog.capture('habit-completed', { id: habitId })
+    completeHabit.mutate({ habitId })
   }
 
   if (!habits) return <p>Click plus button to add habits</p>

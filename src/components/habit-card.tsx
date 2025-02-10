@@ -35,14 +35,13 @@ export const HabitCard = (props: HabitCardProps) => {
         opacity: 1,
         height: '300%',
         left: '50%',
-        aspectRatio: 1 / 1,
       },
       { duration: 1 }
     )
 
     animate(
       '#check-button',
-      { background: 'rgba(var(--ctp-base),0)' },
+      { background: 'rgba(239, 241, 245, 0)' },
       { duration: 0.4 }
     )
 
@@ -71,7 +70,7 @@ export const HabitCard = (props: HabitCardProps) => {
     )
     animate(
       '#check-button',
-      { scale: 1, background: 'rgba(var(--ctp-base),1)' },
+      { scale: 1, background: 'rgba(239, 241, 245,1)' },
       { duration: 0.8 }
     )
     animate('#count', { rotate: 0, scale: 1 }, { duration: 0.3 })
@@ -122,10 +121,10 @@ export const HabitCard = (props: HabitCardProps) => {
       <span
         id="backdrop"
         className={cn(
-          'absolute bottom-[25%] left-1/2 h-0 -translate-x-1/2 translate-y-1/2 rounded-full',
+          'absolute bottom-[25%] left-1/2 aspect-square h-0 -translate-x-1/2 translate-y-1/2 rounded-full',
           props.compact && 'bottom-[50%] left-[80%]',
           props.isCompleted &&
-            'bottom-0 aspect-square h-[300%] translate-y-0 rounded-none bg-linear-to-tr from-lime-500 via-green-500 to-emerald-500 opacity-100'
+            'bottom-0 h-[300%] translate-y-0 rounded-none bg-linear-to-tr from-lime-500 via-green-500 to-emerald-500 opacity-100'
         )}
       ></span>
 
