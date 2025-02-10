@@ -5,10 +5,13 @@ import { api } from '@/trpc/react'
 import { motion } from 'motion/react'
 import { Button } from './ui/button'
 import posthog from 'posthog-js'
+import { useToast } from '@/hooks/use-toast'
 
 export const HabitGrid = () => {
   const [compactView, setCompactView] = useState(false)
   const [faultyHabit, setFaultyHabit] = useState(-1)
+  const { toast } = useToast()
+
   const habits = api.habit.getHabits.useQuery().data
   const habitIds = habits?.map((h) => h.id) ?? []
 
@@ -31,6 +34,12 @@ export const HabitGrid = () => {
     },
     onError(_, variables) {
       setFaultyHabit(variables.habitId)
+
+      toast({
+        variant: 'destructive',
+        title: 'Something went wrong',
+        description: `Try reloading the app and try again`,
+      })
     },
   })
 
