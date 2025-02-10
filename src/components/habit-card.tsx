@@ -1,6 +1,6 @@
 'use client'
 import { type AnimationSequence, motion, useAnimate } from 'motion/react'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import {
   Tooltip,
   TooltipContent,
@@ -18,13 +18,18 @@ interface HabitCardProps {
   isCompleted: boolean
   completions?: number
   onComplete: (habitId: number) => void
+  reset: () => boolean
 }
 
 export const HabitCard = (props: HabitCardProps) => {
   const [scope, animate] = useAnimate()
   const [holdTimeout, setHoldTimeout] = useState<NodeJS.Timeout | null>(null)
   const [isEditing, setIsEditing] = useState(false)
-  const [localComplete, setLocalComplete] = useState(false)
+  const [localComplete, setLocalComplete] = useState(props.isCompleted)
+
+  useEffect(() => {
+    if (props.reset()) notCompletedAnimation()
+  }, [props.reset])
 
   const completedAnimation = () => {
     animate(
@@ -82,15 +87,16 @@ export const HabitCard = (props: HabitCardProps) => {
       setTimeout(() => {
         props.onComplete(props.habit.id)
         setLocalComplete(true)
-      }, 700)
+      }, 800)
     )
   }
 
-  const handleHoldEnd = () => {
+  const handleHoldEnd = async () => {
     if (holdTimeout) {
       clearTimeout(holdTimeout)
       setHoldTimeout(null)
     }
+
     if (!localComplete) {
       notCompletedAnimation()
     }

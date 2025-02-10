@@ -8,6 +8,7 @@ import posthog from 'posthog-js'
 
 export const HabitGrid = () => {
   const [compactView, setCompactView] = useState(false)
+  const [faultyHabit, setFaultyHabit] = useState(-1)
   const habits = api.habit.getHabits.useQuery().data
   const habitIds = habits?.map((h) => h.id) ?? []
 
@@ -27,6 +28,9 @@ export const HabitGrid = () => {
         utils.habit.getBatchCompletionCounts.invalidate(),
         utils.habit.getBatchCompletionStatus.invalidate(),
       ])
+    },
+    onError(_, variables) {
+      setFaultyHabit(variables.habitId)
     },
   })
 
@@ -65,6 +69,13 @@ export const HabitGrid = () => {
                 isCompleted={completionStatus.data?.[i] ?? false}
                 completions={completionCounts.data?.[i] ?? 0}
                 onComplete={handleComplete}
+                reset={() => {
+                  if (faultyHabit === habit.id) {
+                    setFaultyHabit(-1)
+                    return true
+                  }
+                  return false
+                }}
               />
             </motion.div>
           )
