@@ -40,6 +40,7 @@ export function NotLoggedInStartPage() {
             habit={demoHabit}
             onComplete={() => posthog.capture('demo-habit-completed')}
             isCompleted={false}
+            reset={() => false}
           />
         </div>
       </div>
