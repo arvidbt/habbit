@@ -1,6 +1,6 @@
 'use client'
 import { type AnimationSequence, motion, useAnimate } from 'motion/react'
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import {
   Tooltip,
   TooltipContent,
@@ -26,10 +26,6 @@ export const HabitCard = (props: HabitCardProps) => {
   const [holdTimeout, setHoldTimeout] = useState<NodeJS.Timeout | null>(null)
   const [isEditing, setIsEditing] = useState(false)
   const [localComplete, setLocalComplete] = useState(props.isCompleted)
-
-  useEffect(() => {
-    if (props.reset()) notCompletedAnimation()
-  }, [props.reset])
 
   const completedAnimation = () => {
     animate(
@@ -62,7 +58,7 @@ export const HabitCard = (props: HabitCardProps) => {
     animate(buttonSequence)
   }
 
-  const notCompletedAnimation = () => {
+  const notCompletedAnimation = useCallback(() => {
     if (props.isCompleted) return
     animate(
       '#backdrop',
@@ -79,7 +75,11 @@ export const HabitCard = (props: HabitCardProps) => {
       { duration: 0.8 }
     )
     animate('#count', { rotate: 0, scale: 1 }, { duration: 0.3 })
-  }
+  }, [animate, props.compact, props.isCompleted])
+
+  useEffect(() => {
+    if (props.reset()) notCompletedAnimation()
+  }, [props.reset, notCompletedAnimation, props])
 
   const handleHoldStart = () => {
     completedAnimation()
