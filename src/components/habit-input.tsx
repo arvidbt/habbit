@@ -26,7 +26,6 @@ export function CustomInput(props: CustomInputProps) {
     props.onBlur?.(e)
   }
 
-  console.log(props.className)
   return (
     <Input
       {...props}
@@ -34,7 +33,7 @@ export function CustomInput(props: CustomInputProps) {
       className={cn(
         'transition-all duration-200 ease-in-out',
         isFilled && !isFocused
-          ? 'bg-mantle px-2 text-black shadow-none placeholder:text-primary-foreground/70'
+          ? 'bg-mantle placeholder:text-primary-foreground/70 px-2 text-black shadow-none'
           : 'bg-base text-foreground',
         !isFilled && !isFocused
           ? 'rounded-none border-b border-black outline-hidden'
