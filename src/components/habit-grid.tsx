@@ -2,35 +2,22 @@
 import React, { useState } from 'react'
 import { HabitCard } from './habit-card'
 import { api } from '@/trpc/react'
-import { motion } from 'motion/react'
 import { Button } from './ui/button'
 import posthog from 'posthog-js'
 import { useToast } from '@/hooks/use-toast'
+import { LayoutGroup, motion } from 'motion/react'
 
 export const HabitGrid = () => {
   const [compactView, setCompactView] = useState(false)
   const [faultyHabit, setFaultyHabit] = useState(-1)
   const { toast } = useToast()
 
-  const habits = api.habit.getHabits.useQuery().data
-  const habitIds = habits?.map((h) => h.id) ?? []
-
-  const completionStatus = api.habit.getBatchCompletionStatus.useQuery(
-    { habitIds },
-    { enabled: !!habits?.length }
-  )
-  const completionCounts = api.habit.getBatchCompletionCounts.useQuery(
-    { habitIds },
-    { enabled: !!habits?.length }
-  )
+  const { data: habitsData } = api.habit.getHabitsWithStatus.useQuery()
 
   const utils = api.useUtils()
   const completeHabit = api.habit.complete.useMutation({
     onSuccess: async () => {
-      await Promise.all([
-        utils.habit.getBatchCompletionCounts.invalidate(),
-        utils.habit.getBatchCompletionStatus.invalidate(),
-      ])
+      await utils.habit.getHabitsWithStatus.invalidate()
     },
     onError(_, variables) {
       setFaultyHabit(variables.habitId)
@@ -48,7 +35,7 @@ export const HabitGrid = () => {
     completeHabit.mutate({ habitId })
   }
 
-  if (!habits) return <p>Click plus button to add habits</p>
+  if (!habitsData) return <p>Click plus button to add habits</p>
 
   return (
     <div className="grid w-full grid-cols-1 gap-8">
@@ -59,37 +46,64 @@ export const HabitGrid = () => {
       >
         {compactView ? 'Big view' : 'Compact view'}
       </Button>
-      <div className="sm:responsive-grid-[23rem] grid w-full items-center gap-6 px-4 md:px-11">
-        {habits.map((habit, i) => {
-          if (!habit) {
-            return <p key={i}>Something went wrong when fetching this habit</p>
-          }
-          return (
-            <motion.div
-              key={habit.id}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: i * 0.2 }}
-              exit={{ opacity: 0, y: -20 }}
-            >
-              <HabitCard
-                habit={habit}
-                compact={compactView}
-                isCompleted={completionStatus.data?.[i] ?? false}
-                completions={completionCounts.data?.[i] ?? 0}
-                onComplete={handleComplete}
-                reset={() => {
-                  if (faultyHabit === habit.id) {
-                    setFaultyHabit(-1)
-                    return true
-                  }
-                  return false
-                }}
-              />
-            </motion.div>
-          )
-        })}
-      </div>
+      <LayoutGroup>
+        <motion.div
+          layout
+          className="sm:responsive-grid-[23rem] grid w-full items-center gap-6 px-4 md:px-11"
+        >
+          {habitsData
+            .map((data, i) => ({
+              ...data,
+              originalIndex: i,
+            }))
+            .sort((a, b) => {
+              // Sort by completion status (uncompleted first)
+              if (a.isCompleted && !b.isCompleted) return 1
+              if (!a.isCompleted && b.isCompleted) return -1
+              // If completion status is the same, maintain original order
+              return a.originalIndex - b.originalIndex
+            })
+            .map(({ habit, isCompleted, completions, originalIndex }) => {
+              console.log(isCompleted, habit.id)
+              if (!habit) {
+                return (
+                  <p key={originalIndex}>
+                    Something went wrong when fetching this habit
+                  </p>
+                )
+              }
+              return (
+                <motion.div
+                  layout
+                  key={habit.id}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{
+                    layout: { duration: 0.3 },
+                    opacity: { duration: 0.5 },
+                    y: { duration: 0.5, delay: originalIndex * 0.2 },
+                  }}
+                  exit={{ opacity: 0, y: -20 }}
+                >
+                  <HabitCard
+                    habit={habit}
+                    compact={compactView}
+                    isCompleted={isCompleted}
+                    completions={completions}
+                    onComplete={handleComplete}
+                    reset={() => {
+                      if (faultyHabit === habit.id) {
+                        setFaultyHabit(-1)
+                        return true
+                      }
+                      return false
+                    }}
+                  />
+                </motion.div>
+              )
+            })}
+        </motion.div>
+      </LayoutGroup>
     </div>
   )
 }
