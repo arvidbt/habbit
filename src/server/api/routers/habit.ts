@@ -48,11 +48,26 @@ export const habitRouter = createTRPCRouter({
       await ctx.db.delete(habits).where(eq(habits.id, input.id))
     }),
 
-  getHabits: protectedProcedure.query(async ({ ctx }) => {
+  getHabitsWithStatus: protectedProcedure.query(async ({ ctx }) => {
     const fetchedHabits = await ctx.db.query.habits.findMany({
       where: eq(habits.createdById, ctx.session.user.id),
     })
-    return fetchedHabits ?? null
+
+    if (!fetchedHabits) return null
+
+    const today = new Date().toISOString().split('T')[0]?.toString() ?? ''
+    const completions = await ctx.db.query.habitCompletions.findMany()
+
+    return fetchedHabits.map((habit) => ({
+      habit,
+      isCompleted: completions.some(
+        (completion) =>
+          completion.habitId === habit.id && completion.completedDate === today
+      ),
+      completions: completions.filter(
+        (completion) => completion.habitId === habit.id
+      ).length,
+    }))
   }),
 
   complete: protectedProcedure

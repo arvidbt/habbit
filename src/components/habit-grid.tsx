@@ -12,25 +12,12 @@ export const HabitGrid = () => {
   const [faultyHabit, setFaultyHabit] = useState(-1)
   const { toast } = useToast()
 
-  const habits = api.habit.getHabits.useQuery().data
-  const habitIds = habits?.map((h) => h.id) ?? []
-
-  const completionStatus = api.habit.getBatchCompletionStatus.useQuery(
-    { habitIds },
-    { enabled: !!habits?.length }
-  )
-  const completionCounts = api.habit.getBatchCompletionCounts.useQuery(
-    { habitIds },
-    { enabled: !!habits?.length }
-  )
+  const { data: habitsData } = api.habit.getHabitsWithStatus.useQuery()
 
   const utils = api.useUtils()
   const completeHabit = api.habit.complete.useMutation({
     onSuccess: async () => {
-      await Promise.all([
-        utils.habit.getBatchCompletionCounts.invalidate(),
-        utils.habit.getBatchCompletionStatus.invalidate(),
-      ])
+      await utils.habit.getHabitsWithStatus.invalidate()
     },
     onError(_, variables) {
       setFaultyHabit(variables.habitId)
@@ -48,7 +35,7 @@ export const HabitGrid = () => {
     completeHabit.mutate({ habitId })
   }
 
-  if (!habits) return <p>Click plus button to add habits</p>
+  if (!habitsData) return <p>Click plus button to add habits</p>
 
   return (
     <div className="grid w-full grid-cols-1 gap-8">
@@ -64,11 +51,9 @@ export const HabitGrid = () => {
           layout
           className="sm:responsive-grid-[23rem] grid w-full items-center gap-6 px-4 md:px-11"
         >
-          {habits
-            .map((habit, i) => ({
-              habit,
-              isCompleted: completionStatus.data?.[i] ?? false,
-              completions: completionCounts.data?.[i] ?? 0,
+          {habitsData
+            .map((data, i) => ({
+              ...data,
               originalIndex: i,
             }))
             .sort((a, b) => {
@@ -79,6 +64,7 @@ export const HabitGrid = () => {
               return a.originalIndex - b.originalIndex
             })
             .map(({ habit, isCompleted, completions, originalIndex }) => {
+              console.log(isCompleted, habit.id)
               if (!habit) {
                 return (
                   <p key={originalIndex}>
