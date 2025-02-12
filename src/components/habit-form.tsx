@@ -30,12 +30,13 @@ const formSchema = z.object({
 })
 
 interface HabitFormProps {
-  habit?: Habit
+  habit?: Habit & { isCompleted: boolean }
   onSuccess?: () => void
   demo?: boolean
+  onRevert?: () => void
 }
 
-export function HabitForm({ habit, onSuccess, demo }: HabitFormProps) {
+export function HabitForm(props: HabitFormProps) {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const { toast } = useToast()
 
@@ -44,7 +45,7 @@ export function HabitForm({ habit, onSuccess, demo }: HabitFormProps) {
   const handleSuccess = async () => {
     await utils.habit.invalidate()
     setIsSubmitting(false)
-    onSuccess?.()
+    props.onSuccess?.()
   }
 
   const createHabit = api.habit.create.useMutation({
@@ -59,21 +60,25 @@ export function HabitForm({ habit, onSuccess, demo }: HabitFormProps) {
     onSuccess: handleSuccess,
   })
 
+  const revertCompletion = api.habit.revertCompletion.useMutation({
+    onSuccess: handleSuccess,
+  })
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      what: habit?.what ?? '',
-      when: habit?.when ?? '',
-      why: habit?.why ?? '',
+      what: props.habit?.what ?? '',
+      when: props.habit?.when ?? '',
+      why: props.habit?.why ?? '',
     },
   })
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     setIsSubmitting(true)
 
-    if (habit) {
+    if (props.habit) {
       updateHabit.mutate({
-        id: habit.id,
+        id: props.habit.id,
         ...values,
       })
       posthog.capture('habit-updated', { values })
@@ -95,7 +100,7 @@ export function HabitForm({ habit, onSuccess, demo }: HabitFormProps) {
     <Card
       className={cn(
         'mx-auto w-full max-w-md',
-        habit
+        props.habit
           ? 'border-none bg-transparent shadow-none outline-hidden'
           : 'bg-base'
       )}
@@ -115,7 +120,10 @@ export function HabitForm({ habit, onSuccess, demo }: HabitFormProps) {
                     <FormControl>
                       <CustomInput
                         {...field}
-                        className={cn('w-full', habit && 'bg-transparent')}
+                        className={cn(
+                          'w-full',
+                          props.habit && 'bg-transparent'
+                        )}
                       />
                     </FormControl>
                     <FormMessage />
@@ -132,7 +140,10 @@ export function HabitForm({ habit, onSuccess, demo }: HabitFormProps) {
                     <FormControl>
                       <CustomInput
                         {...field}
-                        className={cn('w-full', habit && 'bg-transparent')}
+                        className={cn(
+                          'w-full',
+                          props.habit && 'bg-transparent'
+                        )}
                         placeholder=""
                       />
                     </FormControl>
@@ -153,7 +164,10 @@ export function HabitForm({ habit, onSuccess, demo }: HabitFormProps) {
                     <FormControl>
                       <CustomInput
                         {...field}
-                        className={cn('w-full', habit && 'bg-transparent')}
+                        className={cn(
+                          'w-full',
+                          props.habit && 'bg-transparent'
+                        )}
                         placeholder=""
                       />
                     </FormControl>
@@ -167,31 +181,57 @@ export function HabitForm({ habit, onSuccess, demo }: HabitFormProps) {
               <Button
                 type="submit"
                 className="w-full"
-                disabled={isSubmitting || demo}
+                disabled={isSubmitting || props.demo}
               >
                 {isSubmitting ? (
-                  <>{habit ? 'Updating' : 'Creating'} Habit...</>
-                ) : habit ? (
+                  <>{props.habit ? 'Updating' : 'Creating'} Habit...</>
+                ) : props.habit ? (
                   'Update Habit'
                 ) : (
                   'Create Habit'
                 )}
               </Button>
 
-              {habit && (
+              {props.habit?.isCompleted && (
+                <Button
+                  type="button"
+                  variant="secondary"
+                  className="w-full"
+                  disabled={props.demo}
+                  onClick={() => {
+                    if (props.habit) {
+                      revertCompletion.mutate({ habitId: props.habit.id })
+                      toast({
+                        title: 'Completion reverted',
+                        description:
+                          'Your habit completion has been reverted for today.',
+                      })
+                      posthog.capture('habit-completion-reverted', {
+                        habitId: props.habit.id,
+                      })
+                      props.onRevert?.()
+                    }
+                  }}
+                >
+                  Revert Today&apos;s Completion
+                </Button>
+              )}
+              {props.habit && (
                 <Button
                   type="button"
                   variant="destructive"
                   className="w-full"
-                  disabled={demo}
+                  disabled={props.demo}
                   onClick={() => {
-                    if (habit) {
-                      deleteHabit.mutate({ id: habit.id })
+                    if (props.habit) {
+                      deleteHabit.mutate({ id: props.habit.id })
                       toast({
                         title: 'Habit deleted',
                         description: 'Your habit has been deleted.',
                       })
-                      posthog.capture('habit-deleted', { habitId: habit.id })
+                      posthog.capture('habit-deleted', {
+                        habitId: props.habit.id,
+                      })
                     }
                   }}
                 >

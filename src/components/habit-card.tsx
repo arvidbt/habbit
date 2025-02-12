@@ -175,8 +175,12 @@ export const HabitCard = (props: HabitCardProps) => {
                 exit={{ opacity: 0, y: -20 }}
               >
                 <HabitForm
-                  habit={props.habit}
+                  habit={{ isCompleted: props.isCompleted, ...props.habit }}
                   onSuccess={() => setIsEditing(false)}
+                  onRevert={() => {
+                    setLocalComplete(false)
+                    notCompletedAnimation()
+                  }}
                 />
               </motion.div>
             ) : (
