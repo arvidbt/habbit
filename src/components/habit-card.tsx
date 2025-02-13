@@ -7,11 +7,12 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from './ui/tooltip'
-import { capitalizeFirst, cn } from '@/lib/utils'
+import { cn } from '@/lib/utils'
 import { type Habit } from '@/server/api/routers/habit'
 import { Icons } from './icons'
 import { HabitForm } from './habit-form'
 import { useCompactMode } from '@/stores/habitStore'
+import { HabitCardText } from './habit-card-text'
 
 interface HabitCardProps {
   habit: Habit
@@ -111,7 +112,7 @@ export const HabitCard = (props: HabitCardProps) => {
       transition={{ duration: 0.3 }}
       className={cn(
         'relative w-full overflow-clip rounded-3xl bg-white shadow-lg',
-        compactView ? 'max-w[600px] h-[200px]' : 'h-[75vh] md:h-[44rem]'
+        compactView ? 'max-w[600px] h-[180px]' : 'h-[75vh] md:h-[44rem]'
       )}
     >
       <div
@@ -181,7 +182,7 @@ export const HabitCard = (props: HabitCardProps) => {
                 />
               </motion.div>
             ) : (
-              <HabitText habit={props.habit} />
+              <HabitCardText habit={props.habit} />
             )}
           </div>
 
@@ -196,7 +197,7 @@ export const HabitCard = (props: HabitCardProps) => {
             animate={{ scale: 1 }}
             transition={{ delay: 0.5 }}
             className={cn(
-              'text-text bg-base rounded-full p-12',
+              'text-text bg-base rounded-full p-12 select-none',
               compactView && 'p-8',
               props.isCompleted && 'bg-transparent'
             )}
@@ -206,53 +207,5 @@ export const HabitCard = (props: HabitCardProps) => {
         </div>
       </div>
     </motion.div>
-  )
-}
-
-const HabitText = ({ habit }: { habit: Habit }) => {
-  const compactView = useCompactMode()
-  return (
-    <>
-      <motion.p
-        initial={{ opacity: 0, scale: 0.9 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ ease: [0.2, 0.71, 0.2, 1.01], duration: 0.5 }}
-        className={cn(
-          'font-serif font-bold',
-          compactView ? 'text-3xl' : 'text-4xl'
-        )}
-      >
-        {capitalizeFirst(habit.what)}
-      </motion.p>
-      {!compactView && (
-        <>
-          <motion.p
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{
-              ease: [0.2, 0.71, 0.2, 1.01],
-              duration: 0.3,
-              delay: 0.1,
-            }}
-            className="text-xl"
-          >
-            {capitalizeFirst(habit.when)}
-          </motion.p>
-          <p className="text-subtext0 italic">so I can</p>
-          <motion.p
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{
-              ease: [0.2, 0.71, 0.2, 1.01],
-              duration: 0.3,
-              delay: 0.2,
-            }}
-            className="text-2xl"
-          >
-            {capitalizeFirst(habit.why)}
-          </motion.p>
-        </>
-      )}
-    </>
   )
 }
