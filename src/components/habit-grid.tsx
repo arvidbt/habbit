@@ -2,13 +2,11 @@
 import React, { useState } from 'react'
 import { HabitCard } from './habit-card'
 import { api } from '@/trpc/react'
-import { Button } from './ui/button'
 import posthog from 'posthog-js'
 import { useToast } from '@/hooks/use-toast'
 import { LayoutGroup, motion } from 'motion/react'
 
 export const HabitGrid = () => {
-  const [compactView, setCompactView] = useState(false)
   const [faultyHabit, setFaultyHabit] = useState(-1)
   const { toast } = useToast()
 
@@ -38,14 +36,7 @@ export const HabitGrid = () => {
   if (!habitsData) return <p>Click plus button to add habits</p>
 
   return (
-    <div className="grid w-full grid-cols-1 gap-8">
-      <Button
-        variant="outline"
-        onClick={() => setCompactView(!compactView)}
-        className="mr-11 place-self-end"
-      >
-        {compactView ? 'Big view' : 'Compact view'}
-      </Button>
+    <div className="grid w-full grid-cols-1 gap-8 py-11">
       <LayoutGroup>
         <motion.div
           layout
@@ -64,7 +55,6 @@ export const HabitGrid = () => {
               return a.originalIndex - b.originalIndex
             })
             .map(({ habit, isCompleted, completions, originalIndex }) => {
-              console.log(isCompleted, habit.id)
               if (!habit) {
                 return (
                   <p key={originalIndex}>
@@ -87,7 +77,6 @@ export const HabitGrid = () => {
                 >
                   <HabitCard
                     habit={habit}
-                    compact={compactView}
                     isCompleted={isCompleted}
                     completions={completions}
                     onComplete={handleComplete}
