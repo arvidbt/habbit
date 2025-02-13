@@ -20,7 +20,7 @@ export async function CreateHabitDrawer() {
       </DrawerTrigger>
       <DrawerContent>
         <DrawerHeader>
-          <DrawerTitle></DrawerTitle>
+          <DrawerTitle>Create a new Habit</DrawerTitle>
         </DrawerHeader>
         <DrawerFooter>
           <HabitForm />
