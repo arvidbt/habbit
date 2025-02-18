@@ -7,14 +7,15 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from './ui/tooltip'
-import { capitalizeFirst, cn } from '@/lib/utils'
+import { cn } from '@/lib/utils'
 import { type Habit } from '@/server/api/routers/habit'
 import { Icons } from './icons'
 import { HabitForm } from './habit-form'
+import { useCompactMode } from '@/stores/habitStore'
+import { HabitCardText } from './habit-card-text'
 
 interface HabitCardProps {
   habit: Habit
-  compact?: boolean
   isCompleted: boolean
   completions?: number
   onComplete: (habitId: number) => void
@@ -26,6 +27,7 @@ export const HabitCard = (props: HabitCardProps) => {
   const [holdTimeout, setHoldTimeout] = useState<NodeJS.Timeout | null>(null)
   const [isEditing, setIsEditing] = useState(false)
   const [localComplete, setLocalComplete] = useState(props.isCompleted)
+  const compactView = useCompactMode()
 
   const completedAnimation = () => {
     animate(
@@ -65,7 +67,7 @@ export const HabitCard = (props: HabitCardProps) => {
       {
         height: '0',
         opacity: 0,
-        left: props.compact ? '80%' : '50%',
+        left: compactView ? '80%' : '50%',
       },
       { duration: 0.8 }
     )
@@ -75,7 +77,7 @@ export const HabitCard = (props: HabitCardProps) => {
       { duration: 0.8 }
     )
     animate('#count', { rotate: 0, scale: 1 }, { duration: 0.3 })
-  }, [animate, props.compact, props.isCompleted])
+  }, [animate, compactView, props.isCompleted])
 
   useEffect(() => {
     if (props.reset()) notCompletedAnimation()
@@ -110,7 +112,7 @@ export const HabitCard = (props: HabitCardProps) => {
       transition={{ duration: 0.3 }}
       className={cn(
         'relative w-full overflow-clip rounded-3xl bg-white shadow-lg',
-        props.compact ? 'max-w[600px] h-[200px]' : 'h-[75vh] md:h-[44rem]'
+        compactView ? 'max-w[600px] h-[180px]' : 'h-[75vh] md:h-[44rem]'
       )}
     >
       <div
@@ -128,7 +130,7 @@ export const HabitCard = (props: HabitCardProps) => {
         id="backdrop"
         className={cn(
           'absolute bottom-[25%] left-1/2 aspect-square h-0 -translate-x-1/2 translate-y-1/2 rounded-full',
-          props.compact && 'bottom-[50%] left-[80%]',
+          compactView && 'bottom-[50%] left-[80%]',
           props.isCompleted &&
             'left-1/2 h-[300%] rounded-none bg-linear-to-tr from-lime-500 via-green-500 to-emerald-500 opacity-100'
         )}
@@ -138,10 +140,10 @@ export const HabitCard = (props: HabitCardProps) => {
         id="content"
         className={cn(
           'justify absolute inset-0 flex flex-col items-center gap-11 px-6 pb-16 shadow-lg md:px-16',
-          props.compact && 'pb-0'
+          compactView && 'pb-0'
         )}
       >
-        {!props.compact && (
+        {!compactView && (
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger asChild>
@@ -163,11 +165,11 @@ export const HabitCard = (props: HabitCardProps) => {
         <div
           className={cn(
             'flex h-full min-w-1/2 flex-col items-center justify-between',
-            props.compact && 'w-full flex-row items-center justify-between'
+            compactView && 'w-full flex-row items-center justify-between'
           )}
         >
           <div id="habit-text-container" className="text-text w-full space-y-4">
-            {isEditing && !props.compact ? (
+            {isEditing && !compactView ? (
               <motion.div
                 initial={{ opacity: 0, y: -10 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -184,7 +186,7 @@ export const HabitCard = (props: HabitCardProps) => {
                 />
               </motion.div>
             ) : (
-              <HabitText habit={props.habit} compact={props.compact} />
+              <HabitCardText habit={props.habit} />
             )}
           </div>
 
@@ -199,64 +201,15 @@ export const HabitCard = (props: HabitCardProps) => {
             animate={{ scale: 1 }}
             transition={{ delay: 0.5 }}
             className={cn(
-              'text-text bg-base rounded-full p-12',
-              props.compact && 'p-8',
+              'text-text bg-base rounded-full p-12 select-none',
+              compactView && 'p-8',
               props.isCompleted && 'bg-transparent'
             )}
           >
-            <Icons.Check
-              className={cn('size-24', props.compact && 'size-12')}
-            />
+            <Icons.Check className={cn('size-24', compactView && 'size-12')} />
           </motion.button>
         </div>
       </div>
     </motion.div>
-  )
-}
-
-const HabitText = ({ habit, compact }: { habit: Habit; compact?: boolean }) => {
-  return (
-    <>
-      <motion.p
-        initial={{ opacity: 0, scale: 0.9 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ ease: [0.2, 0.71, 0.2, 1.01], duration: 0.5 }}
-        className={cn(
-          'font-serif font-bold',
-          compact ? 'text-3xl' : 'text-4xl'
-        )}
-      >
-        {capitalizeFirst(habit.what)}
-      </motion.p>
-      {!compact && (
-        <>
-          <motion.p
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{
-              ease: [0.2, 0.71, 0.2, 1.01],
-              duration: 0.3,
-              delay: 0.1,
-            }}
-            className="text-xl"
-          >
-            {capitalizeFirst(habit.when)}
-          </motion.p>
-          <p className="text-subtext0 italic">so I can</p>
-          <motion.p
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{
-              ease: [0.2, 0.71, 0.2, 1.01],
-              duration: 0.3,
-              delay: 0.2,
-            }}
-            className="text-2xl"
-          >
-            {capitalizeFirst(habit.why)}
-          </motion.p>
-        </>
-      )}
-    </>
   )
 }
