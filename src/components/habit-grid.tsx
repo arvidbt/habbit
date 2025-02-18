@@ -64,7 +64,6 @@ export const HabitGrid = () => {
               return a.originalIndex - b.originalIndex
             })
             .map(({ habit, isCompleted, completions, originalIndex }) => {
-              console.log(isCompleted, habit.id)
               if (!habit) {
                 return (
                   <p key={originalIndex}>
