@@ -32,7 +32,6 @@ const formSchema = z.object({
 interface HabitFormProps {
   habit?: Habit & { isCompleted: boolean }
   onSuccess?: () => void
-  demo?: boolean
   onRevert?: () => void
 }
 
@@ -178,11 +177,7 @@ export function HabitForm(props: HabitFormProps) {
             </div>
             <Separator />
             <CardFooter className="flex flex-col gap-4 px-0">
-              <Button
-                type="submit"
-                className="w-full"
-                disabled={isSubmitting || props.demo}
-              >
+              <Button type="submit" className="w-full" disabled={isSubmitting}>
                 {isSubmitting ? (
                   <>{props.habit ? 'Updating' : 'Creating'} Habit...</>
                 ) : props.habit ? (
@@ -197,7 +192,6 @@ export function HabitForm(props: HabitFormProps) {
                   type="button"
                   variant="secondary"
                   className="w-full"
-                  disabled={props.demo}
                   onClick={() => {
                     if (props.habit) {
                       revertCompletion.mutate({ habitId: props.habit.id })
@@ -221,7 +215,6 @@ export function HabitForm(props: HabitFormProps) {
                   type="button"
                   variant="destructive"
                   className="w-full"
-                  disabled={props.demo}
                   onClick={() => {
                     if (props.habit) {
                       deleteHabit.mutate({ id: props.habit.id })
